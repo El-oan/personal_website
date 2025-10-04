@@ -3,255 +3,344 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Eloan Tourtelier Portfolio</title>
-  <meta name="description" content="CentraleSupélec engineering student, data analyst, and creator of Karacter - an offline Chinese learning app. Passionate about technology, languages, and mountain sports." />
-  <meta name="theme-color" content="#0f1724" />
-  <!-- Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <title>Eloan Tourtelier</title>
+  <meta name="description" content="Engineering student, data analyst, and developer based in Paris." />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+      line-height: 1.7;
+      color: #37352f;
+      background: #ffffff;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 80px 24px 120px;
+    }
+
+    /* Header/Title */
+    .page-title {
+      font-size: 40px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: #37352f;
+    }
+
+    .subtitle {
+      font-size: 16px;
+      color: #787774;
+      margin-bottom: 48px;
+    }
+
+    /* Sections */
+    .section {
+      margin-bottom: 48px;
+    }
+
+    h2 {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: #37352f;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    h3 {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #37352f;
+    }
+
+    p {
+      font-size: 16px;
+      color: #37352f;
+      margin-bottom: 12px;
+    }
+
+    /* Links */
+    a {
+      color: inherit;
+      text-decoration: none;
+      border-bottom: 1px solid rgba(55, 53, 47, 0.16);
+      transition: all 0.15s ease;
+    }
+
+    a:hover {
+      border-bottom-color: #37352f;
+      background: rgba(55, 53, 47, 0.04);
+    }
+
+    /* Cards */
+    .card {
+      padding: 20px;
+      border-radius: 4px;
+      margin-bottom: 12px;
+      background: #f7f6f3;
+      transition: background 0.15s ease;
+    }
+
+    .card:hover {
+      background: #f1f0ed;
+    }
+
+    .card-title {
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .card-meta {
+      font-size: 14px;
+      color: #787774;
+      margin-bottom: 8px;
+    }
+
+    .card-desc {
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    /* Tags */
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .tag {
+      font-size: 13px;
+      padding: 4px 10px;
+      background: #e3e2e0;
+      border-radius: 3px;
+      color: #37352f;
+    }
+
+    /* Links section */
+    .links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .link-button {
+      padding: 8px 16px;
+      border-radius: 4px;
+      border: 1px solid #e3e2e0;
+      background: #ffffff;
+      font-size: 15px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .link-button:hover {
+      background: #f7f6f3;
+      border-color: #d3d1cb;
+    }
+
+    /* Stats */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .stat {
+      padding: 16px;
+      background: #f7f6f3;
+      border-radius: 4px;
+    }
+
+    .stat-value {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .stat-label {
+      font-size: 14px;
+      color: #787774;
+    }
+
+    /* Divider */
+    .divider {
+      height: 1px;
+      background: #e3e2e0;
+      margin: 48px 0;
+    }
+
+    /* Responsive */
+    @media (max-width: 640px) {
+      .container {
+        padding: 48px 20px 80px;
+      }
+
+      .page-title {
+        font-size: 32px;
+      }
+
+      h2 {
+        font-size: 20px;
+      }
+
+      .stats {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Icon styles */
+    .icon {
+      width: 20px;
+      height: 20px;
+      display: inline-block;
+    }
+  </style>
 </head>
 <body>
-  <!-- Animated background particles -->
-  <div class="particles" aria-hidden="true">
-    <div class="particle"></div>
-    <div class="particle"></div>
-    <div class="particle"></div>
-    <div class="particle"></div>
-    <div class="particle"></div>
-    <div class="particle"></div>
-  </div>
-  <header class="site-header">
-    <div class="container header-inner">
-      <a class="logo" href="#home" aria-label="Home">
-        <div class="logo-icon">
-          <span></span>
-        </div>
-      </a>
-      <nav class="nav">
-        <a href="#about">About</a>
-        <a href="#projects">Projects</a>
-        <a href="#experience">Experience</a>
-        <a href="#contact">Contact</a>
-      </nav>
+  <div class="container">
+    <!-- Header -->
+    <h1 class="page-title">Eloan Tourtelier</h1>
+    <p class="subtitle">Engineering Student & Developer in Paris</p>
+
+    <!-- About -->
+    <div class="section">
+      <h2>👋 About</h2>
+      <p>I'm a 22-year-old engineering student at <strong>CentraleSupélec Paris-Saclay</strong>, graduating in 2027. Currently working as a Data Analyst at Forvis Mazars in Paris.</p>
+      <p>I'm passionate about technology, languages, and building tools that make learning more accessible. I speak English and French, and I'm learning Chinese.</p>
     </div>
-  </header>
-  <main id="home">
-    <!-- HERO -->
-    <section class="hero">
-      <div class="hero-bg"></div>
-      <div class="container hero-content">
-        <div class="hero-text slide-in">
-          <div class="greeting">Hello, I'm</div>
-          <h1 class="hero-title">
-            <span class="text-gradient">Engineering Student</span>
-            <span class="ampersand">&</span>
-            <span class="text-gradient-2">App Developer</span>
-          </h1>
-          <p class="hero-subtitle">
-            CentraleSupélec Paris-Saclay • Data Analyst at Forvis Mazars • Creator of Karacter
-          </p>
-          <p class="hero-desc">
-            Passionate about technology, machine learning, and language learning. Currently building tools that make education more accessible.
-          </p>
-          <div class="hero-actions">
-            <a href="https://www.linkedin.com/in/your-profile" target="_blank" class="btn btn-primary">
-              <!-- SVG omitted for brevity -->
-              LinkedIn
-            </a>
-            <a href="https://github.com/your-username" target="_blank" class="btn btn-secondary">
-              <!-- SVG omitted for brevity -->
-              GitHub
-            </a>
-          </div>
+
+    <div class="divider"></div>
+
+    <!-- Quick Stats -->
+    <div class="section">
+      <h2>📊 Quick Stats</h2>
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-value">Top 100</div>
+          <div class="stat-label">National Engineering Exam</div>
         </div>
-        <!-- Removed hero-visual/code-snippet! -->
-      </div>
-      <!-- Removed scroll-indicator mouse animation! -->
-    </section>
-    <!-- ABOUT -->
-    <section id="about" class="section">
-      <div class="container">
-        <h2 class="section-title fade-in">About Me</h2>
-        <div class="about-grid">
-          <div class="about-content fade-in">
-            <p class="about-text">
-              I'm an engineering student at <strong>CentraleSupélec</strong> (Paris-Saclay), one of France's top engineering schools, 
-              graduating in 2027. My journey combines rigorous technical education with real-world application development.
-            </p>
-            <p class="about-text">
-              After studying at prestigious preparatory schools including <strong>Lycée Louis-le-Grand</strong>, I'm now focused on 
-              machine learning, data science, and creating technology that solves real problems. My exchange at <strong>Tongji University</strong> 
-              in Shanghai sparked my passion for Chinese language and culture, leading to the creation of Karacter.
-            </p>
-            <p class="about-text">
-              When I'm not coding, you'll find me in the mountains - I lead the CentraleSupélec Mountain Club and organize climbing expeditions.
-            </p>
-          </div>
-          <div class="about-stats fade-in">
-            <div class="stat-card">
-              <div class="stat-number">100+</div>
-              <div class="stat-label">Rank in National Engineering Exam</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-number">100k+</div>
-              <div class="stat-label">Chinese Words in Karacter</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-number">HSK 3/4</div>
-              <div class="stat-label">Chinese Level (5 months)</div>
-            </div>
-          </div>
+        <div class="stat">
+          <div class="stat-value">100k+</div>
+          <div class="stat-label">Words in Karacter App</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value">HSK 3/4</div>
+          <div class="stat-label">Chinese Level</div>
         </div>
       </div>
-    </section>
-    <!-- PROJECTS -->
-    <section id="projects" class="section bg-dark">
-      <div class="container">
-        <h2 class="section-title fade-in">Featured Projects</h2>
-        <div class="project-featured fade-in">
-          <div class="project-image">
-            <div id="karacter-icon"></div>
-            <div class="project-badge">Live on App Store</div>
-          </div>
-          <div class="project-info">
-            <h3 class="project-title">Karacter — Chinese Learning App</h3>
-            <p class="project-desc">
-              An offline Chinese dictionary and learning tool I developed for iOS. Features include character drawing recognition, 
-              100,000+ word entries, HSK 3.0 labeling, native pronunciations, and AI-powered sentence analysis. 
-              Built with Swift and SQLite for complete offline functionality.
-            </p>
-            <div class="project-tech">
-              <span class="tech-tag">Swift</span>
-              <span class="tech-tag">Xcode</span>
-              <span class="tech-tag">SQLite</span>
-              <span class="tech-tag">Core ML</span>
-              <span class="tech-tag">Natural Language Processing</span>
-            </div>
-            <div class="project-links">
-              <a href="https://apps.apple.com/us/app/%E6%96%87-character/id6747664971" target="_blank" class="project-link">
-                View on App Store →
-              </a>
-              <!-- Instagram removed -->
-            </div>
-          </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Projects -->
+    <div class="section">
+      <h2>🚀 Projects</h2>
+      
+      <div class="card">
+        <div class="card-title">Karacter — Chinese Learning App</div>
+        <div class="card-meta">iOS • Live on App Store</div>
+        <div class="card-desc">
+          An offline Chinese dictionary and learning tool with character drawing recognition, 100,000+ word entries, HSK 3.0 labeling, and AI-powered sentence analysis.
         </div>
-        <div class="projects-grid">
-          <!-- Remaining project cards here -->
+        <div class="tags">
+          <span class="tag">Swift</span>
+          <span class="tag">SQLite</span>
+          <span class="tag">Core ML</span>
+          <span class="tag">NLP</span>
         </div>
       </div>
-    </section>
-    <!-- EXPERIENCE -->
-    <section id="experience" class="section">
-      <div class="container">
-        <h2 class="section-title fade-in">Experience</h2>
-        <div class="timeline fade-in">
-          <!-- Timeline as previously, unchanged -->
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Experience -->
+    <div class="section">
+      <h2>💼 Experience</h2>
+      
+      <div class="card">
+        <div class="card-title">Data Analyst</div>
+        <div class="card-meta">Forvis Mazars • Paris • 2024 - Present</div>
+        <div class="card-desc">
+          Working on data analysis and business intelligence projects.
         </div>
       </div>
-    </section>
-    <!-- EDUCATION -->
-    <section id="education" class="section">
-      <div class="container">
-        <h2 class="section-title fade-in">Education</h2>
-        <div class="education-grid fade-in">
-          <a class="edu-card" href="https://en.wikipedia.org/wiki/CentraleSupélec" target="_blank">
-            <div class="edu-year">2023 - 2027</div>
-            <h3>CentraleSupélec</h3>
-            <p class="edu-subtitle">Engineering Degree • Paris-Saclay</p>
-            <p>Ranked 100th/2651 in national entrance exam (PC stream)</p>
-          </a>
-          <a class="edu-card" href="https://en.wikipedia.org/wiki/Lycée_Louis-le-Grand" target="_blank">
-            <div class="edu-year">2022 - 2023</div>
-            <h3>Lycée Louis-le-Grand</h3>
-            <p class="edu-subtitle">Classes Préparatoires • PCX2</p>
-            <p>Top 4 ranking. Intensive mathematics, physics, and chemistry.</p>
-          </a>
-          <a class="edu-card" href="https://en.wikipedia.org/wiki/Tongji_University" target="_blank">
-            <div class="edu-year">2025</div>
-            <h3>Tongji University</h3>
-            <p class="edu-subtitle">Exchange Program • Shanghai</p>
-            <p>#1 in Civil Engineering (Shanghai Ranking 2024)</p>
-          </a>
+
+      <div class="card">
+        <div class="card-title">President, Mountain Club</div>
+        <div class="card-meta">CentraleSupélec • 2024 - Present</div>
+        <div class="card-desc">
+          Leading the school's mountain club and organizing climbing expeditions.
         </div>
       </div>
-    </section>
-    <!-- CONTACT -->
-    <footer id="contact" class="section contact-section">
-      <div class="container">
-        <h2 class="section-title fade-in">Let's Connect</h2>
-        <p class="contact-subtitle fade-in">
-          I'm always interested in new opportunities, collaborations, and interesting projects.
-        </p>
-        <div class="contact-links fade-in">
-          <a href="https://www.linkedin.com/in/your-profile" target="_blank" class="contact-link">
-            <!-- SVG omitted for brevity -->
-            LinkedIn
-          </a>
-          <a href="https://github.com/your-username" target="_blank" class="contact-link">
-            <!-- SVG omitted for brevity -->
-            GitHub
-          </a>
-          <a href="mailto:eloantourtelier@icloud.com" class="contact-link">
-            <!-- SVG omitted for brevity -->
-            Email
-          </a>
-        </div>
-        <div class="footer-bottom fade-in">
-          <p>© 2025 • Built with passion for technology and education</p>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Education -->
+    <div class="section">
+      <h2>🎓 Education</h2>
+      
+      <div class="card">
+        <div class="card-title">CentraleSupélec</div>
+        <div class="card-meta">2023 - 2027 • Paris-Saclay</div>
+        <div class="card-desc">
+          Engineering degree with focus on machine learning and data science. Ranked 100th/2651 in national entrance exam.
         </div>
       </div>
-    </footer>
-  </main>
-  <script>
-    // Smooth scroll (unchanged)
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-      });
-    });
-    // Intersection Observer for fade-in
-    const observerOptions = {
-      threshold: 0.1,
-      rootMargin: '0px 0px -50px 0px'
-    };
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-        }
-      });
-    }, observerOptions);
-    document.querySelectorAll('.fade-in, .slide-in').forEach(el => {
-      observer.observe(el);
-    });
-    // Header scroll effect
-    window.addEventListener('scroll', () => {
-      const currentScroll = window.pageYOffset;
-      const header = document.querySelector('.site-header');
-      if (currentScroll > 100) {
-        header.classList.add('scrolled');
-      } else {
-        header.classList.remove('scrolled');
-      }
-    });
-    // Karacter bounce icon animation
-    window.addEventListener('scroll', function () {
-      const icon = document.getElementById('karacter-icon');
-      const section = document.querySelector('.project-featured');
-      if (!icon || !section) return;
-      const rect = section.getBoundingClientRect();
-      const windowH = window.innerHeight;
-      const sectionHeight = rect.height;
-      let progress = (windowH - rect.top) / (windowH + sectionHeight);
-      progress = Math.max(0, Math.min(1, progress));
-      const bounce = -Math.abs(Math.sin(progress * Math.PI)) * 60;
-      icon.style.transform = `translateY(${bounce}px)`;
-    });
-  </script>
+
+      <div class="card">
+        <div class="card-title">Tongji University</div>
+        <div class="card-meta">2025 • Shanghai</div>
+        <div class="card-desc">
+          Exchange program at one of China's top engineering universities.
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Lycée Louis-le-Grand</div>
+        <div class="card-meta">2022 - 2023 • Paris</div>
+        <div class="card-desc">
+          Classes Préparatoires (PCX2). Intensive preparation in mathematics, physics, and chemistry.
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Contact -->
+    <div class="section">
+      <h2>📬 Connect</h2>
+      <p>Feel free to reach out for opportunities, collaborations, or just to chat about technology and languages.</p>
+      <div class="links">
+        <a href="mailto:eloantourtelier@icloud.com" class="link-button">
+          📧 Email
+        </a>
+        <a href="https://www.linkedin.com/in/your-profile" target="_blank" class="link-button">
+          💼 LinkedIn
+        </a>
+        <a href="https://github.com/your-username" target="_blank" class="link-button">
+          💻 GitHub
+        </a>
+        <a href="https://apps.apple.com/us/app/%E6%96%87-character/id6747664971" target="_blank" class="link-button">
+          📱 Karacter App
+        </a>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
