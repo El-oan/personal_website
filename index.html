@@ -4,10 +4,9 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Eloan Tourtelier</title>
-  <meta name="description" content="Engineering student, data analyst, and developer based in Paris." />
+  <meta name="description" content="Engineering student, data analyst based in Paris." />
   
-  <link rel="icon" type="image/png" href="favicon.png">
-  <link rel="apple-touch-icon" href="favicon.png">
+  <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>👨‍💻</text></svg>">
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -73,54 +72,7 @@
       margin-bottom: 8px;
       color: var(--text-primary);
     }
-    /* Tags Row - container for tags and button */
-    .tags-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 16px;
-      margin-top: 12px;
-      flex-wrap: wrap;
-    }
     
-    /* Tags */
-    .tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      flex: 1;
-    }
-    
-    .tag {
-      font-size: 13px;
-      padding: 4px 10px;
-      background: var(--bg-secondary);
-      border-radius: 6px;
-      color: var(--accent-1);
-      border: 1px solid var(--border-color);
-    }
-    
-    /* Card Button */
-    .card-button {
-      display: inline-block;
-      padding: 10px 20px;
-      background: var(--accent-1);
-      color: white;
-      border-radius: 10px;
-      font-size: 14px;
-      font-weight: 600;
-      border: none;
-      transition: var(--transition);
-      text-decoration: none;
-      border-bottom: none;
-      white-space: nowrap;
-    }
-    
-    .card-button:hover {
-      background: var(--accent-2);
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(84, 104, 255, 0.4);
-    }
     .subtitle {
       font-size: 16px;
       color: var(--text-muted);
@@ -164,13 +116,11 @@
     a {
       color: inherit;
       text-decoration: none;
-      border-bottom: 1px solid var(--border-color);
+      border-bottom: none;
       transition: var(--transition);
     }
 
     a:hover {
-      border-bottom-color: var(--accent-1);
-      background: rgba(84, 104, 255, 0.05);
     }
 
     /* Cards */
@@ -207,14 +157,24 @@
       color: var(--text-secondary);
     }
 
+    /* Tags Row - container for tags and button */
+    .tags-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+    
     /* Tags */
     .tags {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
-      margin-top: 12px;
+      flex: 1;
     }
-
+    
     .tag {
       font-size: 13px;
       padding: 4px 10px;
@@ -222,6 +182,29 @@
       border-radius: 6px;
       color: var(--accent-1);
       border: 1px solid var(--border-color);
+    }
+    
+    /* Card Button */
+    .card-button {
+      display: inline-block;
+      padding: 3px 10px;
+      background: var(--accent-1);
+      color: white;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 450;
+      border: none;
+      transition: var(--transition);
+      text-decoration: none;
+      border-bottom: none;
+      white-space: nowrap;
+      height: fit-content;
+    }
+    
+    .card-button:hover {
+      background: var(--accent-2);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(84, 104, 255, 0.4);
     }
 
     /* Links section */
@@ -260,11 +243,11 @@
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       gap: 12px;
-      margin-top: 16px;
+      margin-top: 8px;
     }
 
     .stat {
-      padding: 20px;
+      padding: 6px 25px;
       background: var(--bg-card);
       border-radius: var(--radius);
       border: 1px solid var(--border-color);
@@ -277,7 +260,7 @@
     }
 
     .stat-value {
-      font-size: 28px;
+      font-size: 24px;
       font-weight: 700;
       margin-bottom: 4px;
       background: var(--gradient-text);
@@ -287,7 +270,7 @@
     }
 
     .stat-label {
-      font-size: 14px;
+      font-size: 13px;
       color: var(--text-muted);
     }
 
@@ -344,19 +327,20 @@
         <div class="card-desc">
           An offline Chinese dictionary and learning tool with character drawing recognition, 100,000+ word entries, HSK 3.0 labeling, and AI-powered sentence analysis.
         </div>
-        <div class="tags">
-          <span class="tag">Swift</span>
-          <span class="tag">SQLite</span>
-          <span class="tag">XCode</span>
-          <span class="tag">Coffee overdrinking</span>
+        <div class="tags-row">
+          <div class="tags">
+            <span class="tag">Swift</span>
+            <span class="tag">SQLite</span>
+            <span class="tag">XCode</span>
+            <span class="tag">Coffee overdrinking</span>
+          </div>
+          <a href="https://apps.apple.com/us/app/%E6%96%87-character/id6747664971" target="_blank" class="card-button">
+            📱 Download on App Store
+          </a>
         </div>
-        <a href="https://apps.apple.com/us/app/%E6%96%87-character/id6747664971" target="_blank" class="card-button">
-          📱 Download on App Store
-        </a>
       </div>
-    </div>
-    
-    <div class="stats">
+      
+      <div class="stats">
         <div class="stat">
           <div class="stat-value">OCR</div>
           <div class="stat-label">Handrawn characters recognition</div>
@@ -393,9 +377,8 @@
           Managed the club's communication and image.
         </div>
       </div>
-    </div>
 
-  <div class="card">
+      <div class="card">
         <div class="card-title">Sponsorship lead, Climbing Club</div>
         <div class="card-meta">CentraleSupélec • 2024 - Present</div>
         <div class="card-desc">
@@ -442,17 +425,14 @@
       <h2>Connect</h2>
       <p>Feel free to reach out for opportunities, collaborations, or just to chat about technology and languages.</p>
       <div class="links">
-        <a href="mailto:eloantourtelier@icloud.com" class="link-button">
-          📧 Email
-        </a>
         <a href="https://www.linkedin.com/in/your-profile" target="_blank" class="link-button">
-          💼 LinkedIn
+          LinkedIn
         </a>
         <a href="https://github.com/your-username" target="_blank" class="link-button">
-          💻 GitHub
+          GitHub
         </a>
         <a href="https://apps.apple.com/us/app/%E6%96%87-character/id6747664971" target="_blank" class="link-button">
-          📱 Karacter App
+          Karacter App
         </a>
       </div>
     </div>
