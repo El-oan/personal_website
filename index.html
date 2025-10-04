@@ -5,7 +5,40 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Eloan Tourtelier</title>
   <meta name="description" content="Engineering student, data analyst, and developer based in Paris." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --bg-primary: #fff;
+      --bg-secondary: #f8fafd;
+      --bg-card: #f5f5fa;
+      --text-primary: #161616;
+      --text-secondary: #444d5c;
+      --text-muted: #8d99ae;
+      --accent-1: #5468ff;
+      --accent-2: #8b5cf6;
+      --accent-3: #ec4899;
+      --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      --gradient-text: linear-gradient(135deg, #667eea 0%, #f093fb 50%, #f5576c 100%);
+      --border-color: rgba(0, 0, 0, 0.08);
+      --container: 1200px;
+      --radius: 16px;
+      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg-primary: #050510;
+        --bg-secondary: #0a0a1f;
+        --bg-card: #0f0f2a;
+        --text-primary: #ffffff;
+        --text-secondary: #b8c0d0;
+        --text-muted: #6b7990;
+        --border-color: rgba(255, 255, 255, 0.08);
+      }
+    }
+
     * {
       margin: 0;
       padding: 0;
@@ -13,11 +46,14 @@
     }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
-      line-height: 1.7;
-      color: #37352f;
-      background: #ffffff;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      color: var(--text-secondary);
+      background: var(--bg-primary);
+      line-height: 1.6;
+      font-size: 16px;
+      overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
 
     .container {
@@ -31,12 +67,12 @@
       font-size: 40px;
       font-weight: 700;
       margin-bottom: 8px;
-      color: #37352f;
+      color: var(--text-primary);
     }
 
     .subtitle {
       font-size: 16px;
-      color: #787774;
+      color: var(--text-muted);
       margin-bottom: 48px;
     }
 
@@ -49,7 +85,7 @@
       font-size: 24px;
       font-weight: 600;
       margin-bottom: 16px;
-      color: #37352f;
+      color: var(--text-primary);
       display: flex;
       align-items: center;
       gap: 8px;
@@ -59,55 +95,65 @@
       font-size: 18px;
       font-weight: 600;
       margin-bottom: 8px;
-      color: #37352f;
+      color: var(--text-primary);
     }
 
     p {
       font-size: 16px;
-      color: #37352f;
+      color: var(--text-secondary);
       margin-bottom: 12px;
+    }
+
+    strong {
+      color: var(--text-primary);
+      font-weight: 600;
     }
 
     /* Links */
     a {
       color: inherit;
       text-decoration: none;
-      border-bottom: 1px solid rgba(55, 53, 47, 0.16);
-      transition: all 0.15s ease;
+      border-bottom: 1px solid var(--border-color);
+      transition: var(--transition);
     }
 
     a:hover {
-      border-bottom-color: #37352f;
-      background: rgba(55, 53, 47, 0.04);
+      border-bottom-color: var(--accent-1);
+      background: rgba(84, 104, 255, 0.05);
     }
 
     /* Cards */
     .card {
       padding: 20px;
-      border-radius: 4px;
+      border-radius: var(--radius);
       margin-bottom: 12px;
-      background: #f7f6f3;
-      transition: background 0.15s ease;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      transition: var(--transition);
     }
 
     .card:hover {
-      background: #f1f0ed;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(84, 104, 255, 0.12);
+      border-color: var(--accent-1);
     }
 
     .card-title {
       font-weight: 600;
       margin-bottom: 4px;
+      color: var(--text-primary);
     }
 
     .card-meta {
       font-size: 14px;
-      color: #787774;
+      color: var(--text-muted);
       margin-bottom: 8px;
     }
 
     .card-desc {
       font-size: 15px;
       line-height: 1.6;
+      color: var(--text-secondary);
     }
 
     /* Tags */
@@ -121,9 +167,10 @@
     .tag {
       font-size: 13px;
       padding: 4px 10px;
-      background: #e3e2e0;
-      border-radius: 3px;
-      color: #37352f;
+      background: var(--bg-secondary);
+      border-radius: 6px;
+      color: var(--accent-1);
+      border: 1px solid var(--border-color);
     }
 
     /* Links section */
@@ -135,21 +182,26 @@
     }
 
     .link-button {
-      padding: 8px 16px;
-      border-radius: 4px;
-      border: 1px solid #e3e2e0;
-      background: #ffffff;
+      padding: 10px 18px;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-card);
       font-size: 15px;
       cursor: pointer;
-      transition: all 0.15s ease;
+      transition: var(--transition);
       display: inline-flex;
       align-items: center;
       gap: 6px;
+      color: var(--text-primary);
+      font-weight: 500;
     }
 
     .link-button:hover {
-      background: #f7f6f3;
-      border-color: #d3d1cb;
+      background: var(--accent-1);
+      color: white;
+      border-color: var(--accent-1);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(84, 104, 255, 0.3);
     }
 
     /* Stats */
@@ -161,26 +213,37 @@
     }
 
     .stat {
-      padding: 16px;
-      background: #f7f6f3;
-      border-radius: 4px;
+      padding: 20px;
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      border: 1px solid var(--border-color);
+      transition: var(--transition);
+    }
+
+    .stat:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(84, 104, 255, 0.1);
     }
 
     .stat-value {
       font-size: 28px;
       font-weight: 700;
       margin-bottom: 4px;
+      background: var(--gradient-text);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
 
     .stat-label {
       font-size: 14px;
-      color: #787774;
+      color: var(--text-muted);
     }
 
     /* Divider */
     .divider {
       height: 1px;
-      background: #e3e2e0;
+      background: var(--border-color);
       margin: 48px 0;
     }
 
@@ -201,13 +264,6 @@
       .stats {
         grid-template-columns: 1fr;
       }
-    }
-
-    /* Icon styles */
-    .icon {
-      width: 20px;
-      height: 20px;
-      display: inline-block;
     }
   </style>
 </head>
