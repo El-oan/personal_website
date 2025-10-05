@@ -207,6 +207,66 @@
       box-shadow: 0 6px 20px rgba(84, 104, 255, 0.4);
     }
 
+    /* Download Card - Special styling */
+    .download-card {
+      padding: 32px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .download-card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+      animation: pulse 3s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 0; }
+      50% { transform: scale(1.5); opacity: 1; }
+    }
+
+    .download-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(102, 126, 234, 0.4);
+      border-color: transparent;
+    }
+
+    .download-icon {
+      font-size: 48px;
+      margin-bottom: 12px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .download-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 6px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .download-subtitle {
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.9);
+      position: relative;
+      z-index: 1;
+    }
+
     /* Links section */
     .links {
       display: flex;
@@ -305,7 +365,7 @@
   <div class="container">
     <!-- Header -->
     <h1 class="page-title">Eloan Tourtelier</h1>
-    <p class="subtitle">Little website, Engineering Student</p>
+    <p class="subtitle">Engineering Student</p>
 
     <!-- About -->
     <div class="section">
