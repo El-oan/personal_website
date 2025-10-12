@@ -7,11 +7,10 @@
   <meta name="description" content="Engineering student, data analyst based in Paris." />
   
   <!-- Favicon -->
-  <link rel="icon" type="image/png" href="GreenDarkLogo.png">
-  <link rel="apple-touch-icon" href="GreenDarkLogo.png">
-  <link rel="shortcut icon" href="GreenDarkLogo.png"> 
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="apple-touch-icon" href="favicon.png">
+  <link rel="shortcut icon" href="favicon.png"> 
   <meta name="theme-color" content="#5468ff">
-
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -33,6 +32,7 @@
       --container: 1200px;
       --radius: 16px;
       --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      --sidebar-w: 220px;
     }
 
     @media (prefers-color-scheme: dark) {
@@ -47,11 +47,9 @@
       }
     }
 
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    html { scroll-behavior: smooth; }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
       font-family: 'Inter', system-ui, -apple-system, sans-serif;
@@ -64,9 +62,73 @@
       -moz-osx-font-smoothing: grayscale;
     }
 
+    /* ===== Minimal floating sidebar (no borders/lines, does not shift layout) ===== */
+    .sidebar {
+      position: fixed;
+      top: 80px;
+      left: 60px;
+      width: var(--sidebar-w);
+      max-height: calc(100vh - 40px);
+      padding: 12px 10px;
+      background: rgba(255,255,255,0.6);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: none;               /* no line */
+      box-shadow: none;           /* minimal */
+      border-radius: 12px;
+      z-index: 1000;
+      overflow-y: auto;
+    }
+    @media (prefers-color-scheme: dark) {
+      .sidebar {
+        background: rgba(5,5,16,0.5);
+      }
+    }
+
+    .side-inner { display: flex; flex-direction: column; gap: 8px; }
+
+    .brand {
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--text-primary);
+      letter-spacing: .02em;
+      padding: 6px 8px;
+      border-radius: 8px;
+      opacity: 0.9;
+    }
+
+    .side-group { display: flex; flex-direction: column; gap: 2px; margin-top: 6px; }
+    .side-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--text-muted);
+      padding: 4px 6px;
+    }
+
+    .side-link {
+      display: block;
+      font-size: 14px;
+      color: var(--text-secondary);
+      padding: 6px 8px 6px 22px;
+      border: none;              /* no line */
+      border-radius: 8px;
+      transition: opacity .2s ease;
+      position: relative;
+      opacity: 0.9;
+    }
+
+    .side-link:hover { opacity: 1; color: var(--text-primary); }
+    .side-link.active {
+      color: var(--accent-1);
+      opacity: 1;
+    }
+    .side-link.active::before { opacity: 1; }
+
+    /* ===== Main container (centered, unchanged by sidebar) ===== */
     .container {
       max-width: 720px;
-      margin: 0 auto;
+      margin: 0 auto;                 /* centered */
       padding: 80px 24px 120px;
     }
 
@@ -77,7 +139,6 @@
       margin-bottom: 2px;
       color: var(--text-primary);
     }
-    
     .subtitle {
       font-size: 16px;
       color: var(--text-muted);
@@ -85,48 +146,17 @@
     }
 
     /* Sections */
-    .section {
-      margin-bottom: 48px;
-    }
-
+    .section { margin-bottom: 48px; scroll-margin-top: 20px; }
     h2 {
-      font-size: 24px;
-      font-weight: 600;
-      margin-bottom: 16px;
-      color: var(--text-primary);
-      display: flex;
-      align-items: center;
-      gap: 8px;
+      font-size: 24px; font-weight: 600; margin-bottom: 16px; color: var(--text-primary);
+      display: flex; align-items: center; gap: 8px;
     }
-
-    h3 {
-      font-size: 18px;
-      font-weight: 600;
-      margin-bottom: 8px;
-      color: var(--text-primary);
-    }
-
-    p {
-      font-size: 16px;
-      color: var(--text-secondary);
-      margin-bottom: 12px;
-    }
-
-    strong {
-      color: var(--text-primary);
-      font-weight: 600;
-    }
+    h3 { font-size: 18px; font-weight: 600; margin-bottom: 8px; color: var(--text-primary); }
+    p { font-size: 16px; color: var(--text-secondary); margin-bottom: 12px; }
+    strong { color: var(--text-primary); font-weight: 600; }
 
     /* Links */
-    a {
-      color: inherit;
-      text-decoration: none;
-      border-bottom: none;
-      transition: var(--transition);
-    }
-
-    a:hover {
-    }
+    a { color: inherit; text-decoration: none; transition: var(--transition); }
 
     /* Cards */
     .card {
@@ -137,275 +167,121 @@
       border: 1px solid var(--border-color);
       transition: var(--transition);
     }
-
     .card:hover {
       transform: translateY(-2px);
       box-shadow: 0 8px 24px rgba(84, 104, 255, 0.12);
       border-color: var(--accent-1);
     }
+    .card-title { font-weight: 600; margin-bottom: 0px; color: var(--text-primary); }
+    .card-meta { font-size: 14px; color: var(--text-muted); margin-bottom: 9px; }
+    .card-desc { font-size: 15px; line-height: 1.54; color: var(--text-secondary); margin-bottom: 20px; }
 
-    .card-title {
-      font-weight: 600;
-      margin-bottom: 0px;
-      color: var(--text-primary);
-    }
+    /* Tags Row */
+    .tags-row { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-top: 12px; flex-wrap: wrap; }
+    .tags { display: flex; flex-wrap: wrap; gap: 8px; flex: 1; }
+    .tag { font-size: 13px; padding: 4px 10px; background: var(--bg-secondary); border-radius: 6px; color: var(--accent-1); border: 1px solid var(--border-color); }
 
-    .card-meta {
-      font-size: 14px;
-      color: var(--text-muted);
-      margin-bottom: 9px;
-    }
-
-    .card-desc {
-      font-size: 15px;
-      line-height: 1.54;
-      color: var(--text-secondary);
-      margin-bottom: 20px;
-    }
-
-    /* Tags Row - container for tags and button */
-    .tags-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 16px;
-      margin-top: 12px;
-      flex-wrap: wrap;
-    }
-    
-    /* Tags */
-    .tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      flex: 1;
-    }
-    
-    .tag {
-      font-size: 13px;
-      padding: 4px 10px;
-      background: var(--bg-secondary);
-      border-radius: 6px;
-      color: var(--accent-1);
-      border: 1px solid var(--border-color);
-    }
-    
     /* Card Button */
     .card-button {
-      display: inline-flex;           
-   	  align-items: center;           
- 	  justify-content: center;        
-      display: inline-block;
-      padding: 3px 10px;
-      background: var(--accent-1);
-      color: white;
-      border-radius: 6px;
-      font-size: 14px;
-      font-weight: 450;
-      border: none;
-      transition: var(--transition);
-      text-decoration: none;
-      border-bottom: none;
-      white-space: nowrap;
-      height: fit-content;
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: 3px 10px; background: var(--accent-1); color: white; border-radius: 6px;
+      font-size: 14px; font-weight: 450; border: none; transition: var(--transition);
+      text-decoration: none; white-space: nowrap; height: fit-content;
     }
-    
-    .card-button:hover {
-      background: var(--accent-2);
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(84, 104, 255, 0.4);
-    }
+    .card-button:hover { background: var(--accent-2); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(84, 104, 255, 0.4); }
 
-    /* Download Card - Special styling */
+    /* Download Card */
     .download-card {
-      padding: 32px;
-      background: var(--bg-card); /* same as other cards */
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      cursor: pointer;
-      transition: var(--transition);
-      position: relative;      
-  	  overflow: hidden;
+      padding: 32px; background: var(--bg-card); border: 1px solid var(--border-color);
+      border-radius: var(--radius); display: flex; flex-direction: column; align-items: center; justify-content: center;
+      text-align: center; cursor: pointer; transition: var(--transition); position: relative; overflow: hidden;
     }
-    
     .download-card::before {
-      content: '';
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
+      content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
       background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-      animation: pulse 3s ease-in-out infinite;
-      pointer-events: none;    
-      z-index: 0; 
+      animation: pulse 3s ease-in-out infinite; pointer-events: none; z-index: 0;
     }
-
-    @keyframes pulse {
-      0%, 100% { transform: scale(1); opacity: 0; }
-      50% { transform: scale(1.5); opacity: 1; }
-    }
-
-    .download-card:hover {
-      background: var(--accent-1);
-      transform: translateY(-4px);
-      box-shadow: 0 12px 32px rgba(102, 126, 234, 0.4);
-      border-color: transparent;
-    }
-    
-    
-    
-    .download-card:hover .download-title,
-    .download-card:hover .download-subtitle {
-      color: white !important;
-      -webkit-text-fill-color: white;
-    }
-
-    .download-icon {
-      font-size: 48px;
-      margin-bottom: 12px;
-      position: relative;
-      z-index: 1;
-    }
-
+    @keyframes pulse { 0%,100% { transform: scale(1); opacity: 0; } 50% { transform: scale(1.5); opacity: 1; } }
+    .download-card:hover { background: var(--accent-1); transform: translateY(-4px); box-shadow: 0 12px 32px rgba(102, 126, 234, 0.4); border-color: transparent; }
+    .download-card:hover .download-title, .download-card:hover .download-subtitle { color: white !important; -webkit-text-fill-color: white; }
+    .download-icon { font-size: 48px; margin-bottom: 12px; position: relative; z-index: 1; }
     .download-title {
-      font-size: 20px;
-      font-weight: 900;
-      background: var(--gradient-text);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      margin-bottom: 1px;
-      margin-bottom: 10px;       /* reduce or remove this */
-      line-height: 1.3; 
+      font-size: 20px; font-weight: 900; background: var(--gradient-text);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      margin-bottom: 10px; line-height: 1.3;
     }
-    
-    .download-subtitle {
-      font-size: 12px;
-      color: var(--text-muted);
-      position: relative;
-      z-index: 1;
-    }
+    .download-subtitle { font-size: 12px; color: var(--text-muted); position: relative; z-index: 1; }
 
     /* Links section */
-    .links {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 16px;
-      margin-top: 16px;
-    }
-
+    .links { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 16px; }
     .link-button {
-      padding: 10px 18px;
-      border-radius: 10px;
-      border: 1px solid var(--border-color);
-      background: var(--bg-card);
-      font-size: 15px;
-      cursor: pointer;
-      transition: var(--transition);
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      color: var(--text-primary);
-      font-weight: 500;
+      padding: 10px 18px; border-radius: 10px; border: 1px solid var(--border-color);
+      background: var(--bg-card); font-size: 15px; cursor: pointer; transition: var(--transition);
+      display: inline-flex; align-items: center; gap: 6px; color: var(--text-primary); font-weight: 500;
     }
-
-    .link-button:hover {
-      background: var(--accent-1);
-      color: white;
-      border-color: var(--accent-1);
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(84, 104, 255, 0.3);
-    }
+    .link-button:hover { background: var(--accent-1); color: white; border-color: var(--accent-1); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(84, 104, 255, 0.3); }
 
     /* Stats */
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 12px;
-      margin-top: 8px;
-    }
-
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-top: 8px; }
     .stat {
-       text-align: center;
-      display: flex;
-     flex-direction: column;
-      align-items: center;
-      padding: 6px 25px;
-      background: var(--bg-card);
-      border-radius: var(--radius);
-      border: 1px solid var(--border-color);
-      transition: var(--transition);
+      text-align: center; display: flex; flex-direction: column; align-items: center;
+      padding: 6px 25px; background: var(--bg-card); border-radius: var(--radius);
+      border: 1px solid var(--border-color); transition: var(--transition);
     }
-
-    .stat:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(84, 104, 255, 0.1);
-    }
-
+    .stat:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(84, 104, 255, 0.1); }
     .stat-value {
-      font-size: 24px;
-      font-weight: 700;
-      margin-bottom: 4px;
-      background: var(--gradient-text);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      font-size: 24px; font-weight: 700; margin-bottom: 4px; background: var(--gradient-text);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
     }
-	
-    /* Added image styling */
-    .card img {
-      width: 15%;
-      border-radius: 10px;
-      margin-bottom: 12px;
-      border: 1px solid var(--border-color);
-    }
-    
-    .stat-label {
-      font-size: 13px;
-      color: var(--text-muted);
-    }
+    .stat-label { font-size: 13px; color: var(--text-muted); }
 
     /* Divider */
-    .divider {
-      height: 1px;
-      background: var(--border-color);
-      margin: 48px 0;
-    }
+    .divider { height: 1px; background: var(--border-color); margin: 48px 0; }
 
     /* Responsive */
+    @media (max-width: 900px) {
+      .sidebar { left: 12px; top: 12px; width: 200px; padding: 10px 8px; }
+      .container { padding: 64px 20px 80px; }
+    }
     @media (max-width: 640px) {
-      .container {
-        padding: 48px 20px 80px;
-      }
-
-      .page-title {
-        font-size: 32px;
-      }
-
-      h2 {
-        font-size: 20px;
-      }
-
-      .stats {
-        grid-template-columns: 1fr;
-      }
+      .sidebar { display: none; } /* minimal approach on very small screens */
+      .page-title { font-size: 32px; }
+      h2 { font-size: 20px; }
+      .stats { grid-template-columns: 1fr; }
     }
   </style>
 </head>
-<body>
+<body id="top">
+  <!-- Minimal floating left navigator (overlay, no lines) -->
+  <nav class="sidebar" aria-label="Section navigation">
+    <div class="side-inner">
+
+      <div class="side-group">
+        <div class="side-label">Profile</div>
+        <a class="side-link" href="#about">About</a>
+      </div>
+
+      <div class="side-group">
+        <div class="side-label">Work</div>
+        <a class="side-link" href="#projects">Projects</a>
+        <a class="side-link" href="#experiences">Experiences</a>
+        <a class="side-link" href="#education">Education</a>
+      </div>
+
+      <div class="side-group">
+        <div class="side-label">Contact</div>
+        <a class="side-link" href="#connect">Connect</a>
+      </div>
+    </div>
+  </nav>
+
   <div class="container">
     <!-- Header -->
     <h1 class="page-title">Eloan Tourtelier</h1>
     <p class="subtitle">Engineering Student</p>
 
     <!-- About -->
-    <div class="section">
+    <div id="about" class="section">
       <p>Hey, welcome on this website! I'm a 22-year-old engineering student at <strong>CentraleSupélec Paris-Saclay</strong>, graduating in 2027. I am currently working as a Data Analyst at Forvis Mazars and based in Paris.</p>
       <p>I love design, languages and coffee shops. I speak English and French, and I'm learning Chinese (Russian too but if I start a russian sentence I end up speaking chinese).</p>
       <p>I spent most of my life in France, and 6 months in China. I'd love to try the USA.</p>
@@ -414,11 +290,11 @@
     <div class="divider"></div>
 
     <!-- Projects -->
-    <div class="section">
+    <div id="projects" class="section">
       <h2>Projects</h2>
       
       <div class="card">
-        <img src="GreenDarkLogo.png" alt="Karacter logo placeholder">
+        <img src="GreenDarkLogo.png" alt="Karacter logo placeholder" style="width:15%;border-radius:10px;margin-bottom:12px;border:1px solid var(--border-color);">
         <div class="card-title">Karacter — Chinese Learning App</div>
         <div class="card-meta">iOS • Live on App Store</div>
         <div class="card-desc">
@@ -453,24 +329,24 @@
     </div>
 
     <div class="card">
-        <div class="card-title">Mistral Hackathon — MCP Integrations</div>
-        <div class="card-meta">Weekend Competition • September 2025 • 1500+ LOC</div>
-        <div class="card-desc">
-          Participated in a Mistral AI (Europe's largest AI company) hackathon. Discovered and developed Model Context Protocol (MCP) connectors enabling LLMs to call external tools and pipelines. Built a demo using Spotify, Genius, and Wikipedia APIs to add music tooling to "Le Chat" AI model.
-        </div>
-        <div class="tags-row">
-          <div class="tags">
-            <span class="tag">Python</span>
-            <span class="tag">MCP</span>
-            <span class="tag">LLM Tooling</span>
-          </div>
+      <div class="card-title">Mistral Hackathon — MCP Integrations</div>
+      <div class="card-meta">Weekend Competition • September 2025 • 1500+ LOC</div>
+      <div class="card-desc">
+        Participated in a Mistral AI (Europe's largest AI company) hackathon. Discovered and developed Model Context Protocol (MCP) connectors enabling LLMs to call external tools and pipelines. Built a demo using Spotify, Genius, and Wikipedia APIs to add music tooling to "Le Chat" AI model.
+      </div>
+      <div class="tags-row">
+        <div class="tags">
+          <span class="tag">Python</span>
+          <span class="tag">MCP</span>
+          <span class="tag">LLM Tooling</span>
         </div>
       </div>
+    </div>
 
     <div class="divider"></div>
 
     <!-- Experience -->
-    <div class="section">
+    <div id="experiences" class="section">
       <h2>Experiences</h2>
       
       <div class="card">
@@ -501,7 +377,7 @@
     <div class="divider"></div>
 
     <!-- Education -->
-    <div class="section">
+    <div id="education" class="section">
       <h2>Education</h2>
       
       <div class="card">
@@ -532,7 +408,7 @@
     <div class="divider"></div>
 
     <!-- Contact -->
-    <div class="section">
+    <div id="connect" class="section">
       <h2>Connect</h2>
       <p>Feel free to reach out :)</p>
       <div class="links">
@@ -551,5 +427,28 @@
       </div>
     </div>
   </div>
+
+  <!-- Minimal scroll-spy -->
+  <script>
+    (function () {
+      const links = Array.from(document.querySelectorAll('.side-link'));
+      const ids = links.map(a => a.getAttribute('href')).filter(h => h && h.startsWith('#'));
+      const sections = ids.map(id => document.querySelector(id)).filter(Boolean);
+
+      function activate(id) {
+        links.forEach(l => l.classList.toggle('active', l.getAttribute('href') === id));
+      }
+
+      const obs = new IntersectionObserver((entries) => {
+        let top = entries
+          .filter(e => e.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        if (top) activate('#' + top.target.id);
+      }, { rootMargin: '-20% 0px -70% 0px', threshold: [0.2, 0.4, 0.6, 0.8] });
+
+      sections.forEach(s => obs.observe(s));
+      activate(ids[0] || '#about');
+    })();
+  </script>
 </body>
 </html>
