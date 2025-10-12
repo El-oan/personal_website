@@ -1,9 +1,11 @@
-# Website
+# Personal Website
 
-WORK IN PROGRESS 😽
-This is the repository for my personal website. It is publicily available. Made with help from Claude models, ChatGPT models, Gemini models. The favicon was made with Illustrator.
+**Status:** Work in Progress 😽  
 
-The website is accessible at: www.eloantourtelier.com
+This repository contains the source code for my personal website. **Website:** [www.eloantourtelier.com](https://www.eloantourtelier.com)
 
+## Tools & Credits
 
-
+- Built and iterated with the help of Claude and ChatGPT models.  
+- Visual assets (favicon, logo) designed with Adobe Illustrator.  
+- Hosted on GitHub Pages.
