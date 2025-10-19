@@ -7,5 +7,5 @@ This repository contains the source code for my personal website. **Website:** [
 ## Tools & Credits
 
 - Built and iterated with the help of Claude and ChatGPT models.  
-- Visual assets (favicon, logo) designed with Adobe Illustrator.  
+- Visual assets designed with Adobe Illustrator.  
 - Hosted on GitHub Pages.
