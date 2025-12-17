@@ -1,11 +1,33 @@
 # Personal Website
 
-**Status:** Work in Progress 😽  
+**Status:** Live 🟢  
+**Website:** [eloantourtelier.com](https://eloantourtelier.com)
 
-This repository contains the source code for my personal website. **Website:** [www.eloantourtelier.com](https://www.eloantourtelier.com)
+This repository contains the source code for my personal website (Vue 3 + Vite).
 
-## Tools & Credits
+## Development
 
-- Built and iterated with the help of Claude and ChatGPT models.  
-- Visual assets designed with Adobe Illustrator.  
-- Hosted on GitHub Pages.
+```bash
+npm install
+npm run dev
+```
+
+## Deployment
+
+This site is hosted on GitHub Pages. To deploy a new version:
+
+1. **Commit your changes**:
+   ```bash
+   git add .
+   git commit -m "Update website"
+   git push
+   ```
+
+2. **Build and Deploy**:
+   ```bash
+   npm run build
+   # Push the 'dist' folder to the 'gh-pages' branch using the gh-pages tool:
+   npx gh-pages -d dist
+   ```
+
+_(Make sure GitHub Pages is configured to serve from the `gh-pages` branch in your repo settings.)_

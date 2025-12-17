@@ -1,9 +1,8 @@
 <template>
-  <!-- Minimal floating left navigator (overlay, no lines) -->
   <nav class="sidebar" aria-label="Section navigation">
     <div class="side-inner">
       <div class="side-group">
-        <div class="side-label">Profile</div>
+        <div class="side-label">Me</div>
         <a class="side-link" href="#about">About</a>
       </div>
 
@@ -16,17 +15,15 @@
 
       <div class="side-group">
         <div class="side-label">Contact</div>
-        <a class="side-link" href="#connect">Connect</a>
+        <a class="side-link" href="#connect">Reach Out</a>
       </div>
     </div>
   </nav>
 
   <div class="container">
-    <!-- Header -->
     <h1 class="page-title">Eloan Tourtelier</h1>
     <p class="subtitle">Engineering Student</p>
 
-    <!-- About -->
     <div id="about" class="section">
       <p>
         Hi! I'm a 22-year-old engineering student at
@@ -45,7 +42,6 @@
 
     <div class="divider"></div>
 
-    <!-- Projects -->
     <div id="projects" class="section">
       <h2>Projects</h2>
 
@@ -56,11 +52,11 @@
           style="width: 15%; border-radius: 10px; margin-bottom: 12px; border: 1px solid var(--border-color)"
         />
         <div class="card-title">Karacter — Chinese Learning App</div>
-        <div class="card-meta">iOS • Live on App Store</div>
+        <div class="card-meta">iOS • Live on the App Store</div>
         <div class="card-desc">
           An offline Chinese learning helper with character drawing recognition, HSK 3.0 labeling, AI-powered sentence
-          analysis. You can search for any Chinese word, expression, pinyin, or English term—or hand-draw any character
-          you want to learn more about. Pronunciations are available, as well as the strokes order. No internet
+          analysis. You can search for any Chinese word, expression, pinyin, English term — or hand-draw any character
+          you want to learn more about. Pronunciations are available, as well as the correct strokes order. No internet
           connection nor VPN required.
         </div>
         <div class="tags-row">
@@ -68,26 +64,26 @@
             <span class="tag">Swift</span>
             <span class="tag">SQLite</span>
             <span class="tag">XCode</span>
-            <span class="tag">Coffee (a lot)</span>
+            <span class="tag">Coffee</span>
           </div>
-          <a class="card-button" href="/karacter/">Karacter website</a>
+          <a class="card-button" href="/karacter/">文 website</a>
         </div>
       </div>
 
       <div class="stats">
         <a href="https://apps.apple.com/us/app/%E6%96%87-character/id6747664971" target="_blank" style="text-decoration: none">
           <div class="stat download-card">
-            <div class="download-title">Download Karacter</div>
+            <div class="download-title">Download</div>
             <div class="download-subtitle">available on the App Store</div>
           </div>
         </a>
         <div class="stat">
-          <div class="stat-value">123k+</div>
+          <div class="stat-value">178k+</div>
           <div class="stat-label">high quality word definitions</div>
         </div>
         <div class="stat">
           <div class="stat-value">9500+</div>
-          <div class="stat-label">vectorized characters and stroke animations</div>
+          <div class="stat-label">vectorized stroke animations</div>
         </div>
       </div>
     </div>
@@ -96,7 +92,7 @@
       <div class="card-title">Mistral Hackathon — MCP Integrations</div>
       <div class="card-meta">Weekend Competition • September 2025 • 1500+ LOC</div>
       <div class="card-desc">
-        Participated in a Mistral AI (Europe's largest AI company) hackathon. Discovered and developed Model Context
+        Competed in a Mistral AI hackathon. Discovered and developed Model Context
         Protocol (MCP) connectors enabling LLMs to call external tools and pipelines. Built a demo using Spotify,
         Genius, and Wikipedia APIs to add music tooling to "Le Chat" AI model.
       </div>
@@ -111,7 +107,6 @@
 
     <div class="divider"></div>
 
-    <!-- Experience -->
     <div id="experiences" class="section">
       <h2>Experiences</h2>
 
@@ -128,7 +123,7 @@
       </div>
 
       <div class="card">
-        <div class="card-title">Sponsorship lead, Climbing Club</div>
+        <div class="card-title">Sponsorship lead, Bouldering Club</div>
         <div class="card-meta">CentraleSupélec • 2024 - 2025</div>
         <div class="card-desc">Approached companies to establish partnerships.</div>
       </div>
@@ -136,7 +131,6 @@
 
     <div class="divider"></div>
 
-    <!-- Education -->
     <div id="education" class="section">
       <h2>Education</h2>
 
@@ -166,7 +160,6 @@
 
     <div class="divider"></div>
 
-    <!-- Contact -->
     <div id="connect" class="section">
       <h2>Connect</h2>
       <p>Feel free to reach out :)</p>
@@ -200,10 +193,8 @@ onMounted(() => {
     links.forEach((l) => l.classList.toggle('active', l.getAttribute('href') === id));
   }
 
-  // Scroll-spy that works reliably even for very tall sections.
-  // (IntersectionObserver thresholds often don't trigger when a section never reaches 20% visibility.)
   const pickActive = () => {
-    const y = 120; // "active" line from top of viewport
+    const y = 120; 
     let best = sections[0];
     for (const s of sections) {
       const top = s.getBoundingClientRect().top;
