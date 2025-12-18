@@ -176,13 +176,13 @@ a {
   border-radius: var(--radius);
   margin-bottom: 12px;
   background: var(--bg-card);
-  border: 1px solid var(--border-color);
+  border: 0.5px solid var(--border-color);
   transition: var(--transition);
 }
 
 .card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(84, 104, 255, 0.12);
+  box-shadow: 0 8px 18px rgba(84, 104, 255, 0.12);
   border-color: var(--accent-1);
 }
 
@@ -284,7 +284,7 @@ a {
   content: '文';
   position: absolute;
   font-size: 120px;
-  font-weight: 900;
+  font-weight: 800;
   right: -20px;
   bottom: -35px;
   opacity: 0;

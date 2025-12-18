@@ -47,7 +47,7 @@
 
       <div class="card">
         <img
-          src="/GreenDarkLogo.png"
+          src="/KaracterLogo.png"
           alt="Karacter logo placeholder"
           style="width: 15%; border-radius: 10px; margin-bottom: 12px; border: 1px solid var(--border-color)"
         />
@@ -98,7 +98,6 @@
       </div>
       <div class="tags-row">
         <div class="tags">
-          <span class="tag">Python</span>
           <span class="tag">MCP</span>
           <span class="tag">LLM Tooling</span>
         </div>
@@ -112,7 +111,7 @@
 
       <div class="card">
         <div class="card-title">Data Analyst</div>
-        <div class="card-meta">Forvis Mazars • Paris • 2024 - Present</div>
+        <div class="card-meta">Forvis Mazars • Paris • sep 2025 - feb 2026</div>
         <div class="card-desc">Worked as a data analysis/engineer/devops.</div>
       </div>
 

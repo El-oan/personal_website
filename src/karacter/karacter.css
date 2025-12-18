@@ -43,7 +43,6 @@
   transition: all 0.2s ease;
 }
 
-/* Animations */
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -141,6 +140,7 @@
 
 .cta-group {
   display: flex;
+  color: white;
   gap: 16px;
   justify-content: center;
   flex-wrap: wrap;

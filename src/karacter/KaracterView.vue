@@ -3,23 +3,22 @@
     <nav class="navbar">
       <div class="container nav-content">
         <div class="brand">
-          <img src="/GreenDarkLogo.png" alt="Karacter Logo" class="nav-logo" />
-          <span class="nav-title">Karacter</span>
+          <span class="nav-title">文 - Karacter</span>
         </div>
-        <a href="/" class="back-link">← eloantourtelier.com</a>
+        <RouterLink to="/" class="back-link">← home</RouterLink>
       </div>
     </nav>
 
     <main class="container">
-      <section class="hero fade-in-up">
-        <img src="/GreenDarkLogo.png" alt="Karacter App Icon" class="app-icon floating" />
+      <section class="hero">
+        <img src="/KaracterLogo.png" alt="Karacter App Icon" class="app-icon" />
         <h1 class="hero-title">Master Chinese Offline</h1>
         <p class="hero-subtitle">
           The essential companion for Chinese learners. Handwriting recognition, HSK vocabulary, and AI sentence breakdown—all without internet.
         </p>
         
         <div class="cta-group">
-          <a href="https://apps.apple.com/us/app/%E6%96%87-character/id6747664971?l=zh-Hans-CN" target="_blank" class="btn btn-primary pulse-hover">
+          <a href="https://apps.apple.com/us/app/%E6%96%87-character/id6747664971?l=zh-Hans-CN" target="_blank" class="btn btn-primary">
             Download on App Store
           </a>
           <a href="mailto:character.help@gmail.com" class="btn btn-secondary">
@@ -28,52 +27,38 @@
         </div>
       </section>
 
-      <section class="features-section">
-        <h2 class="section-title">Why Karacter?</h2>
-        <div class="features-list">
-          <div class="feature-item slide-in-left">
-            <div class="feature-icon-wrapper">
-              <span class="feature-icon">📚</span>
-            </div>
-            <div class="feature-content">
-              <h3>Offline Dictionary</h3>
-              <p>Search words, pinyin, or English definitions instantly. No VPN or internet required—perfect for travel or commute.</p>
-            </div>
-          </div>
-          
-          <div class="feature-item slide-in-right">
-            <div class="feature-content text-right-md">
-              <h3>Handwriting</h3>
-              <p>Draw characters directly on screen. Our recognition engine helps you find meanings and practice correct stroke order.</p>
-            </div>
-            <div class="feature-icon-wrapper">
-              <span class="feature-icon">✍️</span>
-            </div>
-          </div>
-
-          <div class="feature-item slide-in-left">
-            <div class="feature-icon-wrapper">
-              <span class="feature-icon">🧠</span>
-            </div>
-            <div class="feature-content">
-              <h3>AI Analysis</h3>
-              <p>Stuck on a complex sentence? The built-in AI breaks it down into understandable grammar blocks.</p>
+      <section class="history-section">
+        <div class="history-content">
+          <div class="history-text">
+            <h2>Why Karacter?</h2>
+            <p>
+              Karacter is built to be <strong>fast</strong>, <strong>clean</strong>, and <strong>fully offline</strong>.
+              Search Chinese words, pinyin, or English—anytime, anywhere, without a VPN or internet connection.
+            </p>
+            <p>
+              If you don’t know a character, you can <strong>hand-draw</strong> it to find it instantly. You can also
+              listen to pronunciations, save vocabulary for later, and follow proper stroke order.
+            </p>
+            <p>
+              For harder sentences, Karacter includes <strong>AI features</strong> that break down complex structures
+              into understandable blocks. Vocabulary is labeled using the official <strong>HSK 3.0</strong> list.
+            </p>
+            <div class="pill-row">
+              <span class="pill">Offline</span>
+              <span class="pill">Handwriting</span>
+              <span class="pill">AI</span>
+              <span class="pill">HSK 3.0</span>
+              <span class="pill">Stroke Order</span>
             </div>
           </div>
-
-          <div class="feature-item slide-in-right">
-            <div class="feature-content text-right-md">
-              <h3>HSK 3.0 Ready</h3>
-              <p>Stay up to date. All vocabulary is labeled with the latest HSK levels so you can track your true proficiency.</p>
-            </div>
-            <div class="feature-icon-wrapper">
-              <span class="feature-icon">📈</span>
-            </div>
+          <div class="history-image-wrapper">
+            <div class="why-mark">文</div>
+            <span class="image-caption">wén — “character / writing”</span>
           </div>
         </div>
       </section>
 
-      <section class="history-section fade-in">
+      <section class="history-section">
         <div class="history-content">
           <div class="history-text">
             <h2>The Story Behind Karacter</h2>
@@ -132,11 +117,3 @@
     </footer>
   </div>
 </template>
-
-<script setup>
-// No script logic needed for now
-</script>
-
-<style scoped>
-/* Scoped overrides if needed */
-</style>
