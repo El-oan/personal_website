@@ -33,10 +33,11 @@
         I love design, languages and coffee shops. I speak English and French, and I'm learning Chinese (Russian too but
         if I start a russian sentence I end up speaking chinese). I recently discovered I really enjoy machine learning too.
       </p>
-      <p>I spent most of my life in France (specifically Bretagne), and 6 months in China. I'd love to try the USA, and travel around the world (yep overdone ik).</p>
-
       <p>
+        I spent most of my life in France (specifically Bretagne), and 6 months in China. 
+        I'd love to try the USA, and travel around the world (yep overdone ik).
         Do not hesitate one second to reach out!
+
       </p>
     </div>
 
@@ -110,9 +111,9 @@
       <h2>Experiences</h2>
 
       <div class="card">
-        <div class="card-title">Data Analyst</div>
+        <div class="card-title">Data Internship</div>
         <div class="card-meta">Forvis Mazars • Paris • sep 2025 - feb 2026</div>
-        <div class="card-desc">Worked as a data analysis/engineer/devops.</div>
+        <div class="card-desc">Worked as a data Analyst/Engineer/Devops.</div>
       </div>
 
       <div class="card">

@@ -262,7 +262,7 @@ a {
 .download-card {
   padding: 32px;
   background: var(--bg-card);
-  border: 1px solid var(--border-color);
+  border: 0.5px solid var(--border-color);
   border-radius: var(--radius);
   display: flex;
   flex-direction: column;
@@ -283,11 +283,11 @@ a {
 .download-card::after {
   content: '文';
   position: absolute;
-  font-size: 120px;
+  font-size: 110px;
   font-family: system-ui, sans-serif;
   font-weight: 600;
   right: -20px;
-  bottom: -35px;
+  bottom: -53px;
   opacity: 0;
   transform: rotate(20deg) translate(40px, 40px) scale(0.8);
   transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -407,10 +407,10 @@ a {
   padding: 6px 25px;
   background: var(--bg-card);
   border-radius: var(--radius);
-  border: 1px solid var(--border-color);
+  border: 0.5px solid var(--border-color);
   transition: var(--transition);
   height: 100%;
-  min-height: 90px;
+  min-height: 80px;
 }
 
 .stat:hover {
