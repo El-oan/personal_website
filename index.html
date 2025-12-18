@@ -1,11 +1,12 @@
 <!doctype html>
 <html lang="en">
-<head>
+  <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Eloan Tourtelier</title>
-  <meta name="description" content="Engineering student, data analyst based in Paris." />
-  
+    <title>Eloan Tourtelier</title>
+    <meta name="description" content="Engineering student, data analyst based in Paris." />
+
+    <!-- Favicon -->
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="apple-touch-icon" href="/favicon.png" />
     <link rel="shortcut icon" href="/favicon.png" />
@@ -13,9 +14,22 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
-</head>
-<body id="top">
+  </head>
+  <body id="top">
     <div id="app"></div>
-    <script type="module" src="/src/home/main.js"></script>
-</body>
+    <script>
+      (function () {
+        var params = new URLSearchParams(window.location.search);
+        var p = params.get('p');
+        var q = params.get('q');
+        if (p !== null) {
+          var newUrl = '/' + (p || '');
+          if (q) newUrl += '?' + q;
+          if (window.location.hash) newUrl += window.location.hash;
+          window.history.replaceState(null, '', newUrl);
+        }
+      })();
+    </script>
+    <script type="module" src="/src/main.js"></script>
+  </body>
 </html>

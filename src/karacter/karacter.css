@@ -1,4 +1,4 @@
-:root {
+.app-wrapper {
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   --color-bg: #ffffff;
   --color-bg-alt: #f8fafc;
@@ -17,13 +17,13 @@
   --container-width: 900px;
 }
 
-* {
+.app-wrapper * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
-body {
+.app-wrapper {
   font-family: var(--font-sans);
   background-color: var(--color-bg);
   color: var(--color-text);
@@ -31,13 +31,13 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-.container {
+.app-wrapper .container {
   max-width: var(--container-width);
   margin: 0 auto;
   padding: 0 24px;
 }
 
-a {
+.app-wrapper a {
   text-decoration: none;
   color: inherit;
   transition: all 0.2s ease;

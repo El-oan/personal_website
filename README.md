@@ -1,11 +1,10 @@
 # Personal Website
 
-**Status:** Live 🟢  
-**Website:** [eloantourtelier.com](https://eloantourtelier.com)
+**Status:** Work in Progress 😽  
 
-This repository contains the source code for my personal website (Vue 3 + Vite).
+This repository contains the source code for my personal website. **Website:** [www.eloantourtelier.com](https://www.eloantourtelier.com)
 
+## Tools & Credits
 
-## Deployment
-
-This site is hosted on GitHub Pages. 
+- Visual assets designed with Adobe Illustrator.  
+- Hosted on GitHub Pages.
