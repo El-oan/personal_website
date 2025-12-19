@@ -34,10 +34,9 @@
         if I start a russian sentence I end up speaking chinese). I recently discovered I really enjoy machine learning too.
       </p>
       <p>
-        I spent most of my life in France (specifically Bretagne), and 6 months in China. 
+        I spent most of my life in the west of France, and 6 months in China. 
         I'd love to try the USA, and travel around the world (yep overdone ik).
         Do not hesitate one second to reach out!
-
       </p>
     </div>
 
@@ -90,7 +89,7 @@
     </div>
 
     <div class="card">
-      <div class="card-title">Mistral Hackathon — MCP Integrations</div>
+      <div class="card-title">Mistral Hackathon</div>
       <div class="card-meta">Weekend Competition • September 2025 • 1500+ LOC</div>
       <div class="card-desc">
         Competed in a Mistral AI hackathon. Discovered and developed Model Context

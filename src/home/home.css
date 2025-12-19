@@ -176,13 +176,13 @@ a {
   border-radius: var(--radius);
   margin-bottom: 12px;
   background: var(--bg-card);
-  border: 0.5px solid var(--border-color);
+  border: 0.3px solid var(--border-color);
   transition: var(--transition);
 }
 
 .card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 18px rgba(84, 104, 255, 0.12);
+  transform: scale(1.005);
+  box-shadow: 0 8px 8px rgba(84, 104, 255, 0.07);
   border-color: var(--accent-1);
 }
 
@@ -236,6 +236,7 @@ a {
   justify-content: center;
   padding: 3px 10px;
   background: var(--accent-1);
+  opacity: 0.8;
   color: white;
   border-radius: 6px;
   font-size: 14px;
@@ -250,6 +251,7 @@ a {
 .card-button:hover {
   filter: saturate(1.05) brightness(1.02);
   background: white;
+  opacity: 1;
   color: var(--accent-1);
   border: 0.5px solid var(--accent-1);
 }
@@ -297,7 +299,7 @@ a {
 }
 
 .download-card:hover {
-  background: white;
+  background: linear-gradient(135deg, #d8eee7 0%, #ffffff 50%, #ffffff 100%);
   transform: translateY(-6px) scale(1.02);
   box-shadow: 0 20px 40px rgba(84, 104, 255, 0.2);
   border-color: rgba(84, 104, 255, 0.3);
@@ -331,7 +333,7 @@ a {
 
 .download-title {
   font-size: 20px;
-  font-weight: 700;
+  font-weight: 600;
   background: var(--gradient-text);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -359,27 +361,26 @@ a {
 }
 
 .link-button {
-  padding: 10px 18px;
+  padding: 8px 15px;
   border-radius: 10px;
-  border: 1px solid var(--border-color);
+  border: 0.5px solid var(--border-color);
   background: var(--bg-card);
   font-size: 15px;
   cursor: pointer;
-  transition: var(--transition);
   display: inline-flex;
   align-items: center;
   gap: 6px;
   color: var(--text-primary);
-  font-weight: 600;
-  letter-spacing: 0.01em;
+  font-weight: 400;
+  letter-spacing: 0.02em;
 }
 
 .link-button:hover {
+  transform: scale(1.05);
   background: var(--accent-1);
   color: white;
   border-color: var(--accent-1);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(84, 104, 255, 0.3);
+  box-shadow: 0 4px 8px rgba(84, 104, 255, 0.3);
 }
 
 .stats {
@@ -414,13 +415,13 @@ a {
 }
 
 .stat:hover {
-  transform: translateY(-2px);
+  transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(84, 104, 255, 0.1);
 }
 
 .stat-value {
   font-size: 21px;
-  font-weight: 700;
+  font-weight: 500;
   margin-bottom: 4px;
   background: var(--gradient-text);
   -webkit-background-clip: text;
