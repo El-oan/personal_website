@@ -26,11 +26,30 @@
             Contact us
           </a>
         </div>
+
+        <div class="stats-grid fade-in-up" style="animation-delay: 0.15s;">
+          <div class="stat-card">
+            <div class="stat-content">
+              <div class="stat-value counter" data-target="178">0</div>
+              <div class="stat-label">High Quality Definitions</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-content">
+              <div class="stat-value counter" data-target="9500">0</div>
+              <div class="stat-label">Vectorized Stroke Animations</div>
+            </div>
+          </div>
+          <div class="stat-card">
+
+            
+          </div>
+        </div>
       </section>
 
-      <section class="history-section">
-        <div class="history-content">
-          <div class="history-text">
+      <section class="content-section">
+        <div class="feature-block">
+          <div class="feature-text">
             <h2>What is Karacter?</h2>
             <p>
               Karacter is built to be <strong>fast</strong>, <strong>clean</strong>, and <strong>fully offline</strong>. 
@@ -51,9 +70,9 @@
         </div>
       </section>
 
-      <section class="history-section">
-        <div class="history-content">
-          <div class="history-text">
+      <section class="content-section">
+        <div class="feature-block">
+          <div class="feature-text">
             <h2>The Story Behind Karacter</h2>
             <p>
               When I arrived in Shanghai, I started learning Chinese. I then discovered Pleco and a 
@@ -67,8 +86,8 @@
               process of being a rat employee.
             </p>
           </div>
-          <div class="history-image-wrapper">
-            <img src="/OldLogo.png" alt="Original Karacter Logo" class="history-image" />
+          <div class="feature-image-wrapper">
+            <img src="/OldLogo.png" alt="Original Karacter Logo" class="feature-image" />
             <span class="image-caption">The first logo design. But it looked too similar to Alipay. I made it with Illustrator.</span>
           </div>
         </div>
@@ -88,3 +107,64 @@
     </footer>
   </div>
 </template>
+
+<script setup>
+import { onMounted } from 'vue';
+
+onMounted(() => {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        
+        // Trigger counters if it's a counter element
+        if (entry.target.classList.contains('counter')) {
+          animateCounter(entry.target);
+          observer.unobserve(entry.target); // Only animate once
+        }
+      }
+    });
+  }, { threshold: 0.1 });
+
+  // Use a timeout to ensure DOM is ready and animations don't conflict with load
+  setTimeout(() => {
+      document.querySelectorAll('.fade-in, .fade-in-up').forEach(el => observer.observe(el));
+      // Observe counters specifically
+      document.querySelectorAll('.counter').forEach(el => observer.observe(el));
+  }, 100);
+});
+
+function animateCounter(el) {
+  const targetStr = el.dataset.target;
+  const target = parseInt(targetStr);
+  
+  if (isNaN(target)) return;
+
+  const duration = 2000; // 2 seconds
+  const fps = 60;
+  const totalFrames = (duration / 1000) * fps;
+  let frame = 0;
+  
+  const timer = setInterval(() => {
+    frame++;
+    const progress = frame / totalFrames;
+    const easeOutQuad = progress * (2 - progress); // Ease out effect
+    
+    const current = Math.floor(easeOutQuad * target);
+    
+    if (frame >= totalFrames) {
+      // Final formatting
+      if (target === 178) el.innerText = '178k+';
+      else if (target === 9500) el.innerText = '9500+';
+      else el.innerText = target;
+      
+      clearInterval(timer);
+    } else {
+      // Intermediate formatting
+      if (target === 178) el.innerText = current + 'k+';
+      else if (target === 9500) el.innerText = current + '+';
+      else el.innerText = current;
+    }
+  }, 1000 / fps);
+}
+</script>

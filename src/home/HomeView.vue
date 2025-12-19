@@ -70,22 +70,6 @@
         </div>
       </div>
 
-      <div class="stats">
-        <a href="https://apps.apple.com/us/app/%E6%96%87-character/id6747664971" target="_blank" style="text-decoration: none">
-          <div class="stat download-card">
-            <div class="download-title">Download</div>
-            <div class="download-subtitle">available on the App Store</div>
-          </div>
-        </a>
-        <div class="stat">
-          <div class="stat-value">178k+</div>
-          <div class="stat-label">high quality word definitions</div>
-        </div>
-        <div class="stat">
-          <div class="stat-value">9500+</div>
-          <div class="stat-label">vectorized stroke animations</div>
-        </div>
-      </div>
     </div>
 
     <div class="card">
