@@ -9,12 +9,20 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: HomeView,
+      meta: { 
+        title: 'Portfolio',
+        favicon: '/favicon.jpeg'
+      },
     },
     {
       path: '/karacter',
       name: 'karacter',
       component: KaracterView,
       alias: ['/karacter/'],
+      meta: { 
+        title: 'Karacter',
+        favicon: '/KaracterLogo.png'
+      },
     },
     {
       path: '/:pathMatch(.*)*',
@@ -30,6 +38,15 @@ const router = createRouter({
     }
     return savedPosition || { top: 0 };
   },
+});
+
+router.afterEach((to) => {
+  document.title = to.meta.title || 'Portfolio';
+  
+  const link = document.querySelector("link[rel~='icon']");
+  if (link) {
+    link.href = to.meta.favicon || '/favicon.png';
+  }
 });
 
 export default router;

@@ -48,7 +48,7 @@
       <div class="card">
         <img
           src="/KaracterLogo.png"
-          alt="Karacter logo placeholder"
+          alt="Karacter logo"
           style="width: 15%; border-radius: 10px; margin-bottom: 12px; border: 1px solid var(--border-color)"
         />
         <div class="card-title">Karacter — Chinese Learning App</div>
