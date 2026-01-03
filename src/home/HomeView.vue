@@ -70,6 +70,25 @@
         </div>
       </div>
 
+      <div class="card">
+        <div class="card-title">Transformer Model</div>
+        <div class="card-meta">Machine Learning • Work in progress</div>
+        <div class="card-desc">
+          An implementation of the Transformer architecture from almost scratch, 
+          following the <em>Attention Is All You Need</em> paper, with some adjustements. 
+          Uses multi-head attention, positional encoding, residual connections, 
+          Layer Normalization. Trained on Kaggle's GPUs.
+          Work in progress.
+        </div>
+        <div class="tags-row">
+          <div class="tags">
+            <span class="tag">Python</span>
+            <span class="tag">PyTorch</span>
+          </div>
+          <a class="card-button" href="/notebook">Notebook</a>
+        </div>
+      </div>
+
     </div>
 
     <div class="card">

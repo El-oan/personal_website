@@ -9,7 +9,7 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: HomeView,
-      meta: { 
+      meta: {
         title: 'Portfolio',
         favicon: '/favicon.jpeg'
       },
@@ -19,9 +19,18 @@ const router = createRouter({
       name: 'karacter',
       component: KaracterView,
       alias: ['/karacter/'],
-      meta: { 
+      meta: {
         title: 'Karacter',
         favicon: '/KaracterLogo.png'
+      },
+    },
+    {
+      path: '/notebook',
+      name: 'notebook',
+      component: () => import('../notebook/NotebookView.vue'),
+      meta: {
+        title: 'Transformer Notebook',
+        favicon: '/favicon.jpeg'
       },
     },
     {
@@ -42,7 +51,7 @@ const router = createRouter({
 
 router.afterEach((to) => {
   document.title = to.meta.title || 'Portfolio';
-  
+
   const link = document.querySelector("link[rel~='icon']");
   if (link) {
     link.href = to.meta.favicon || '/favicon.png';

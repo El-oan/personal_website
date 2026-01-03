@@ -1,0 +1,228 @@
+/* Notebook App Wrapper (Full Screen Background) */
+.notebook-app {
+    background-color: #1e1e1e;
+    min-height: 100vh;
+    width: 100%;
+    margin: 0;
+}
+
+/* Notebook View Container (Centered Content) */
+.notebook-container {
+    color: #cccccc;
+    font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+    padding: 40px;
+    box-sizing: border-box;
+    font-size: 14px;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+/* Notebook Header */
+.notebook-header {
+    margin-bottom: 40px;
+    border-bottom: 1px solid #2d2d2d;
+    padding-bottom: 20px;
+}
+
+.notebook-title {
+    font-size: 2.2em;
+    font-weight: 600;
+    color: #cccccc;
+    margin: 0 0 10px 0;
+}
+
+.notebook-subtitle {
+    color: #cccccc;
+    font-size: 1em;
+    opacity: 0.8;
+}
+
+/* Cell Styles */
+.cell-wrapper {
+    margin-bottom: 16px;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+}
+
+/* Input Prompt [1] */
+.input-prompt {
+    width: 35px;
+    text-align: right;
+    padding-right: 8px;
+    color: #569cd6;
+    font-family: 'Menlo', 'Monaco', monospace;
+    font-size: 12px;
+    padding-top: 10px;
+    opacity: 0.7;
+    flex-shrink: 0;
+    user-select: none;
+}
+
+/* Code Cell Container */
+.code-cell-container {
+    flex: 1;
+    background-color: #1e1e1e;
+    border: 1px solid #454545;
+    border-radius: 4px;
+    overflow-x: auto;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+/* Row-based Code Rendering */
+.code-row {
+    display: flex;
+    flex-direction: row;
+    line-height: 1.5;
+    min-width: 100%;
+    /* Ensure content doesn't shrink below width */
+    cursor: text;
+}
+
+/* Line Number (in row) */
+.line-number {
+    width: 40px;
+    /* Fixed width */
+    flex-shrink: 0;
+    text-align: right;
+    padding-right: 15px;
+    color: #858585;
+    /* Default dim color */
+    user-select: none;
+    border-right: 1px solid #333;
+    margin-right: 10px;
+}
+
+/* Hover Effect: Light up line number */
+.code-row:hover .line-number {
+    color: #e0e0e0;
+    /* Brighten on hover */
+    /* border-right-color: #555; Optional: brighten border too */
+}
+
+/* Line Content (Code) */
+.line-content {
+    flex: 1;
+    padding-right: 10px;
+    white-space: pre;
+    color: #d4d4d4;
+    font-family: inherit;
+}
+
+/* Syntax Colors */
+.control-keyword {
+    color: #c586c0;
+}
+
+.keyword {
+    color: #569cd6;
+}
+
+.string {
+    color: #ce9178;
+}
+
+.comment {
+    color: #6a9955;
+}
+
+.function {
+    color: #dcdcaa;
+}
+
+.number {
+    color: #b5cea8;
+}
+
+.class-name {
+    color: #4ec9b0;
+}
+
+.operator {
+    color: #d4d4d4;
+}
+
+/* Markdown Cell - Enhanced Typography */
+.markdown-cell {
+    padding: 20px 25px;
+    color: #e0e0e0;
+    line-height: 1.7;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 16px;
+    background-color: transparent;
+}
+
+.markdown-cell h1 {
+    font-size: 2.2em;
+    margin-bottom: 0.8em;
+    border-bottom: 1px solid #3c3c3c;
+    padding-bottom: 0.3em;
+    font-weight: 700;
+    color: #ffffff;
+    margin-top: 0;
+}
+
+.markdown-cell h2 {
+    font-size: 1.8em;
+    margin-top: 1.5em;
+    margin-bottom: 0.8em;
+    font-weight: 600;
+    color: #ffffff;
+    border-bottom: 1px solid #333;
+    padding-bottom: 0.3em;
+}
+
+.markdown-cell h3 {
+    font-size: 1.4em;
+    margin-top: 1.5em;
+    margin-bottom: 0.6em;
+    font-weight: 600;
+    color: #dcdcaa;
+}
+
+.markdown-cell p {
+    margin-bottom: 1.2em;
+}
+
+.markdown-cell code {
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 2px 5px;
+    border-radius: 4px;
+    font-family: 'Menlo', monospace;
+    font-size: 0.9em;
+    color: #ce9178;
+}
+
+.markdown-cell a {
+    color: #3794ff;
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+}
+
+.markdown-cell a:hover {
+    border-bottom-color: #3794ff;
+}
+
+/* MathJax / Latex placeholder */
+.math {
+    font-style: italic;
+    font-family: 'Times New Roman', Times, serif;
+    margin: 15px 0;
+    color: #d4d4d4;
+    text-align: center;
+    font-size: 1.1em;
+}
+
+/* Back Link */
+.back-link {
+    display: inline-block;
+    margin-bottom: 20px;
+    color: #569cd6;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.back-link:hover {
+    text-decoration: underline;
+}
