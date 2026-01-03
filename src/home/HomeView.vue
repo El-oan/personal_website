@@ -152,8 +152,9 @@
         <a href="https://x.com/eeloannn" target="_blank" class="link-button"> Twitter </a>
         <a href="https://www.instagram.com/eloan.trtl/" target="_blank" class="link-button"> Instagram </a>
         <a href="/resume.pdf" class="link-button" download> Resume (PDF) </a>
+        <a href="https://www.kaggle.com/eloantourtelier" target="_blank" class="link-button"> Kaggle </a>
         <a href="https://apps.apple.com/us/app/%E6%96%87-character/id6747664971" target="_blank" class="link-button">
-          Download my App
+          Download Karacter
         </a>
         <a href="https://sites.google.com/view/characteres/accueil" target="_blank" class="link-button">
           Karacter Website
