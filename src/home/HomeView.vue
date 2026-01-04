@@ -71,7 +71,7 @@
       </div>
 
       <div class="card">
-        <div class="card-title">Transformer Model</div>
+        <div class="card-title">Attention Implementation</div>
         <div class="card-meta">Machine Learning • Work in progress</div>
         <div class="card-desc">
           An implementation of the Transformer architecture from almost scratch, 
@@ -85,13 +85,11 @@
             <span class="tag">Python</span>
             <span class="tag">PyTorch</span>
           </div>
-          <a class="card-button" href="/notebook">Notebook</a>
+          <a class="card-button" href="/notebook">notebook</a>
         </div>
       </div>
 
-    </div>
-
-    <div class="card">
+      <div class="card">
       <div class="card-title">Mistral Hackathon</div>
       <div class="card-meta">Weekend Competition • September 2025 • 1500+ LOC</div>
       <div class="card-desc">
@@ -105,7 +103,10 @@
           <span class="tag">LLM Tooling</span>
         </div>
       </div>
+      </div>
+      
     </div>
+
 
     <div class="divider"></div>
 

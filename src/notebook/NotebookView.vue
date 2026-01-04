@@ -1,7 +1,7 @@
 <template>
   <div class="notebook-app">
     <div class="notebook-container">
-      <router-link to="/" class="back-link">← Back to Portfolio</router-link>
+      <router-link to="/" class="back-link">← Back to main page</router-link>
       
       <header class="notebook-header">
         <h1 class="notebook-title">attention.ipynb</h1>
@@ -41,7 +41,7 @@ import './notebook.css';
 const cells = ref([
   {
     type: 'markdown',
-    content: `# Transformer Implementation (cross attention)\n\nIn this notebook, we will implement the Transformer architecture.\nStarting point: [Annotated Transformer](https://nlp.seas.harvard.edu/annotated-transformer/)\n\n`
+    content: `In this notebook, we will implement the Transformer architecture.\nStarting point: [Annotated Transformer](https://nlp.seas.harvard.edu/annotated-transformer/)\n\n`
   },
   {
     type: 'code',
@@ -204,7 +204,6 @@ CONFIG = {
         # x: (N, L, D)
         # mask: (N, 1, L)
         # output: (N, L, D)
-        "Follow Figure 1 (left) for connections."
         x = self.sublayer[0](x, lambda x: self.self_attn(x, x, x, mask))
         x = self.sublayer[1](x, self.feed_forward)
         return x`
@@ -483,6 +482,10 @@ CONFIG = {
         return self.criterion(x, true_dist.clone().detach())`
   },
   {
+    type: 'markdown',
+    content: `## Tokenizing and embedding`
+  },
+  {
     type: 'code',
     content: `from tokenizers import Tokenizer
 from tokenizers.models import BPE
@@ -563,7 +566,7 @@ from tokenizers.decoders import BPEDecoder`
   },
   {
     type: 'markdown',
-    content: `## Training Loop`
+    content: `## Training`
   },
   {
     type: 'code',
@@ -871,8 +874,6 @@ function renderMarkdown(text) {
 function getHighlightedLines(code) {
   if (!code) return [];
   const highlighted = highlight(code);
-  // Highlight function returns a single string with \n. We split it back to lines.
-  // IMPORTANT: highlight() must preserve logical lines.
   return highlighted.split('\n');
 }
 
