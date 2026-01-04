@@ -192,6 +192,9 @@ import { onBeforeUnmount, onMounted } from 'vue';
 let cleanup;
 
 onMounted(() => {
+  // Set body background to dark to fix overscroll
+  document.body.style.backgroundColor = '#121212';
+
   const links = Array.from(document.querySelectorAll('.side-link'));
   const ids = links.map((a) => a.getAttribute('href')).filter((h) => h && h.startsWith('#'));
   const sections = ids.map((id) => document.querySelector(id)).filter(Boolean);
@@ -232,6 +235,9 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => {
+  // Reset body background when leaving home page
+  document.body.style.backgroundColor = '';
+  
   if (cleanup) cleanup();
 });
 </script>

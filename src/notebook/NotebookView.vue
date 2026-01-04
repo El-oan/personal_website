@@ -35,8 +35,18 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted, onBeforeUnmount } from 'vue';
 import './notebook.css';
+
+onMounted(() => {
+  // Set body background to matching notebook color for overscroll
+  document.body.style.backgroundColor = '#1E1E1E';
+});
+
+onBeforeUnmount(() => {
+  // Reset body background
+  document.body.style.backgroundColor = '';
+});
 
 const cells = ref([
   {
