@@ -3,7 +3,6 @@
     <nav class="sidebar" aria-label="Section navigation">
       <div class="side-inner">
         <div class="side-group">
-          <div class="side-label">Me</div>
           <a class="side-link" href="#about">About</a>
         </div>
 
@@ -28,11 +27,14 @@
       <div id="about" class="section">
         <p>
           Hi! I'm a 22-year-old engineering student at
-          <strong>CentraleSupélec Paris-Saclay</strong>, graduating in 2027. I am currently based in Paris.
+          <strong>CentraleSupélec Paris-Saclay</strong>, graduating in 2027. 
+          I am currently based in Paris.
         </p>
         <p>
-          I love design, languages and coffee shops. I speak English and French, and I'm learning Chinese (Russian too but
-          if I start a russian sentence I end up speaking chinese). I recently discovered I really enjoy machine learning too.
+          I love design, languages and coffee shops. 
+          I speak English and French, and I'm learning Chinese (Russian too but
+          if I start a russian sentence I end up speaking chinese). 
+          I recently discovered I really enjoy machine learning too.
         </p>
         <p>
           I spent most of my life in the west of France, and 6 months in China. 

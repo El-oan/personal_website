@@ -15,7 +15,6 @@
   --container: 1200px;
   --radius: 16px;
   --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  --sidebar-w: 220px;
   --card-border-width: 1px;
 }
 
@@ -51,7 +50,7 @@ html {
   position: fixed;
   top: 80px;
   left: 60px;
-  width: var(--sidebar-w);
+  width: 190px;
   max-height: calc(100vh - 40px);
   padding: 12px 10px;
   background: rgba(18, 18, 18, 0.6);
@@ -143,10 +142,10 @@ html {
   color: var(--text-primary);
 }
 
-.subtitle {
+.home-wrapper .subtitle {
   font-size: 16px;
   color: var(--text-muted);
-  margin-bottom: 40px;
+  margin-bottom: 50px;
 }
 
 .section {
@@ -163,8 +162,6 @@ html {
   align-items: center;
   gap: 8px;
 }
-
-
 
 .home-wrapper p {
   font-size: 16px;
@@ -208,11 +205,13 @@ html {
   border-right: var(--card-border-width) solid var(--border-color);
   background: repeating-linear-gradient(90deg,
       transparent,
-      transparent 9px,
+      transparent 10px,
       var(--border-color) 10px,
       var(--border-color) 11px);
-  opacity: 0.6;
+  opacity: 0.7;
   box-sizing: border-box;
+  background-clip: content-box;
+  padding-right: 1px;
 }
 
 .card-logo {
@@ -223,7 +222,6 @@ html {
 }
 
 .card:hover {
-
   box-shadow: 0 8px 8px rgba(84, 104, 255, 0.07);
   border-color: var(--accent-1);
 }
@@ -342,8 +340,8 @@ html {
 @media (max-width: 900px) {
   .sidebar {
     left: 12px;
-    top: 12px;
-    width: 200px;
+    top: 15px;
+    width: 160px;
     padding: 10px 8px;
   }
 
