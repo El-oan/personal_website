@@ -1,5 +1,10 @@
 <template>
   <div class="home-wrapper">
+    <canvas 
+      ref="bgCanvas" 
+      class="bg-canvas"
+      style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0;"
+    ></canvas>
     <nav class="sidebar" aria-label="Section navigation">
       <div class="side-inner">
         <div class="side-group">
@@ -189,16 +194,98 @@
 </template>
 
 <script setup>
-import { onBeforeUnmount, onMounted } from 'vue';
+import { ref, onBeforeUnmount, onMounted } from 'vue';
 
 let cleanup;
 
+const bgCanvas = ref(null);
+
 onMounted(() => {
-  // Set body background to dark to fix overscroll
   document.body.style.backgroundColor = '#121212';
+
+  const canvas = bgCanvas.value;
+  if (!canvas) return;
+
+  const ctx = canvas.getContext('2d');
+  let width, height;
+  let animationFrame;
+
+  const resize = () => {
+    const dpr = window.devicePixelRatio || 1;
+    width = window.innerWidth;
+    height = window.innerHeight;
+    canvas.width = width * dpr;
+    canvas.height = height * dpr;
+    ctx.scale(dpr, dpr);
+  };
+  
+  window.addEventListener('resize', resize);
+  resize();
+
+  const particles = [];
+  const spacing = 30; // Distance between dots
+  
+  const render = (time) => {
+    ctx.clearRect(0, 0, width, height);
+    
+    const t = time * 0.001;
+    
+    const rows = Math.ceil(height / spacing);
+    const cols = Math.ceil(width / spacing);
+
+    for (let y = 0; y < rows; y++) {
+      for (let x = 0; x < cols; x++) {
+        // Primary Grid Point
+        const px = x * spacing + (y % 2 === 0 ? 0 : spacing / 2);
+        const py = y * spacing;
+
+        const val = Math.sin(x * 0.1 + t) * 0.5 + 
+                    Math.sin(y * 0.15 + t * 0.8) * 0.5 + 
+                    Math.sin((x + y) * 0.05 + t * 0.3) * 0.3 +
+                    Math.sin((x - y * 1.5) * 0.03 + t * 0.5) * 0.2;
+                    
+        const norm = (val + 1.5) / 3; 
+        
+        // Binary threshold: sudden appearance
+        if (norm > 0.60) {
+          ctx.fillStyle = `rgba(84, 104, 255, 0.4)`; // Blue
+          ctx.fillRect(px, py, 2.5, 2.5);
+        }
+
+        // Secondary Grid Point (Independent)
+        const px2 = x * spacing + (y % 2 === 0 ? spacing / 2 : 0);
+        const py2 = y * spacing; 
+
+        // Different frequencies and directions for independence
+        const val2 = Math.cos(x * 0.12 - t * 0.8) * 0.5 + 
+                     Math.sin(y * 0.18 + t * 1.1) * 0.5 + 
+                     Math.cos((x - y) * 0.04 + t * 0.4) * 0.3 +
+                     Math.sin((x + y * 1.2) * 0.04 - t * 0.6) * 0.2;
+
+        const norm2 = (val2 + 1.5) / 3;
+
+        // Binary threshold for second grid
+        if (norm2 > 0.60) {
+          ctx.fillStyle = `rgba(65, 80, 210, 0.5)`; // Lighter Blue
+          ctx.fillRect(px2, py2, 2, 2);
+        }
+      }
+    }
+    
+    animationFrame = requestAnimationFrame(render);
+  };
+
+  animationFrame = requestAnimationFrame(render);
+
+  // Store for cleanup
+  canvas._cleanup = () => {
+    window.removeEventListener('resize', resize);
+    cancelAnimationFrame(animationFrame);
+  };
 
   const links = Array.from(document.querySelectorAll('.side-link'));
   const ids = links.map((a) => a.getAttribute('href')).filter((h) => h && h.startsWith('#'));
+
   const sections = ids.map((id) => document.querySelector(id)).filter(Boolean);
 
   function activate(id) {
@@ -237,8 +324,11 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => {
-  // Reset body background when leaving home page
   document.body.style.backgroundColor = '';
+  
+  if (bgCanvas.value && bgCanvas.value._cleanup) {
+    bgCanvas.value._cleanup();
+  }
   
   if (cleanup) cleanup();
 });

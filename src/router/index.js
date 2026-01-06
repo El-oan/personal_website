@@ -29,7 +29,7 @@ const router = createRouter({
       name: 'notebook',
       component: () => import('../notebook/NotebookView.vue'),
       meta: {
-        title: 'Transformer Notebook',
+        title: 'Notebook',
         favicon: '/favicon.jpeg'
       },
     },
