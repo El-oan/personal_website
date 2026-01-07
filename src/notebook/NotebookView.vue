@@ -66,13 +66,8 @@ import torch
 import torch.nn as nn
 
 from torch.optim.lr_scheduler import LambdaLR
-import altair as alt
 from torch.nn.functional import pad, log_softmax
-from torch.utils.data import DataLoader
-from torch.utils.data.distributed import DistributedSampler
-import torch.distributed as dist
-import torch.multiprocessing as mp
-from torch.nn.parallel import DistributedDataParallel as DDP`
+from torch.utils.data import DataLoader`
   },
   {
     type: 'code',
@@ -81,14 +76,14 @@ DEVICE = "mps"
 
 CONFIG = {
     "batch_size": 32,
-    "distributed": False,
     "d_model": 512,
     "vocab_size": 32000,
-    "num_epochs": 3,
+    "dataset_lenght": 100000,  # Lines of the CSV dataset
+    "num_epochs": 5,
     "accum_iter": 10,  # Amount of batches computed before incrementing the weights
     "base_lr": 1.0,  # Learning rate
     "max_padding": 72,
-    "warmup": 3000
+    "warmup": 3000  # Linear increase of the learning rate
 }`
   },
   {
@@ -500,9 +495,9 @@ CONFIG = {
     content: `from tokenizers import Tokenizer
 from tokenizers.models import BPE
 from tokenizers.trainers import BpeTrainer
-from tokenizers.pre_tokenizers import Whitespace
+from tokenizers.pre_tokenizers import Metaspace
 from tokenizers.processors import TemplateProcessing
-from tokenizers.decoders import BPEDecoder`
+from tokenizers.decoders import Metaspace as MetaspaceDecoder`
   },
   {
     type: 'code',
@@ -510,8 +505,9 @@ from tokenizers.decoders import BPEDecoder`
     df = pd.read_csv(
         data_path, 
         engine='python',        # Robust parser
+        encoding='utf-8',
         on_bad_lines='skip',
-        nrows=10000
+        nrows=CONFIG['dataset_lenght']
     )    
     train_src = df['fr'].tolist() # Source is French
     train_tgt = df['en'].tolist() # Target is English
@@ -522,7 +518,7 @@ from tokenizers.decoders import BPEDecoder`
     content: `def train_tokenizer(data, vocab_size, min_frequency=2):
 
     tokenizer = Tokenizer(BPE(unk_token="<unk>"))
-    tokenizer.pre_tokenizer = Whitespace()
+    tokenizer.pre_tokenizer = Metaspace()
     trainer = BpeTrainer(special_tokens=["<s>", "<pad>", "</s>", "<unk>"], 
                          vocab_size=vocab_size, 
                          min_frequency=min_frequency)
@@ -537,18 +533,19 @@ from tokenizers.decoders import BPEDecoder`
             ("</s>", tokenizer.token_to_id("</s>")),
         ],
     )
-    tokenizer.decoder = BPEDecoder()
+    tokenizer.decoder = MetaspaceDecoder()
     return tokenizer`
   },
   {
     type: 'code',
     content: `def load_tokenizers(data_path=DATA_PATH):
-    " Read the csv and returns two JSON containing the tokenizers"
+    "Read the csv and returns two JSON containing the tokenizers"
 
     df = pd.read_csv(
                 data_path, 
-                nrows=10000,      # The training file is too big
+                nrows=CONFIG['dataset_lenght'],     # The training file is too big
                 engine='python',        # Robust parser
+        encoding='utf-8',
                 on_bad_lines='skip'     
             )
 
@@ -594,22 +591,21 @@ from tokenizers.decoders import BPEDecoder`
         out = model.forward(batch.src, batch.tgt, batch.src_mask, batch.tgt_mask)
         loss, loss_node = loss_compute(out, batch.tgt_y, batch.ntokens)
 
-        if mode == "train" or mode == "train+log":
+        if mode == "train":
             loss_node.backward()
-
             if i % accum_iter == 0:
                 if optimizer is not None:
                     optimizer.step()
                     optimizer.zero_grad(set_to_none=True)
                 n_accum += 1
-
             if scheduler is not None:
                 scheduler.step()
 
         total_loss += loss
         total_tokens += batch.ntokens
         tokens += batch.ntokens
-        if i % 40 == 1 and (mode == "train" or mode == "train+log"):
+
+        if i % 40 == 1 and (mode == "train"):
             lr = optimizer.param_groups[0]["lr"]
             elapsed = time.time() - start
             print(
@@ -624,9 +620,8 @@ from tokenizers.decoders import BPEDecoder`
   },
   {
     type: 'code',
-    content: `def collate_batch(batch, src_tokenizer, tgt_tokenizer, max_padding=128, pad_id=1,):
-    "Makes every sentence have the same lenght to get a tensor"
-
+    content: `def collate_batch(batch, src_tokenizer, tgt_tokenizer, max_padding=128, pad_id=1):
+    "Makes every sentence have the same lenght of max_padding to get a tensor"
     src_list, tgt_list = [], []
     
     for (sentence_src, sentence_tgt) in batch:
@@ -641,67 +636,48 @@ from tokenizers.decoders import BPEDecoder`
 
     src = torch.stack(src_list)
     tgt = torch.stack(tgt_list)
-    return (src, tgt)
+    return (src, tgt)`
+  },
+  {
+    type: 'code',
+    content: `def create_dataloaders(vocab_src, vocab_tgt, batch_size=12000, max_padding=128):
+    "Instantiate the dataloaders for training and validation"
 
-def create_dataloaders(vocab_src, vocab_tgt,
-    batch_size=12000,
-    max_padding=128,
-    is_distributed=True,
-    data_path=DATA_PATH,
-    src_lang='fr',
-    tgt_lang='en'
-):
-    # Alias for clarity
-    tokenizer_src = vocab_src
-    tokenizer_tgt = vocab_tgt
-    
     # Get Pad ID dynamically
-    pad_id = tokenizer_src.token_to_id("<pad>")
+    pad_id = vocab_src.token_to_id("<pad>")
 
     def collate_fn(batch):
         return collate_batch(
             batch,
-            tokenizer_src,
-            tokenizer_tgt,
+            vocab_src,
+            vocab_tgt,
             max_padding=max_padding,
             pad_id=pad_id,
         )
 
-    train_src, train_tgt = load_data(data_path)
-
-    # Create Iterators
+    train_src, train_tgt = load_data(DATA_PATH)
     split_idx = int(len(train_src) * 0.95)
     train_iter = list(zip(train_src[:split_idx], train_tgt[:split_idx]))
     valid_iter = list(zip(train_src[split_idx:], train_tgt[split_idx:]))
-
-    # Distributed Sampler (Crucial for Multi-GPU)
-    train_sampler = (
-        DistributedSampler(train_iter) if is_distributed else None
-    )
-    valid_sampler = (
-        DistributedSampler(valid_iter) if is_distributed else None
-    )
 
     # DataLoaders
     train_dataloader = DataLoader(
         train_iter,
         batch_size=batch_size,
-        shuffle=(train_sampler is None),
-        sampler=train_sampler,
+        shuffle=True,
         collate_fn=collate_fn,
     )
     valid_dataloader = DataLoader(
         valid_iter,
         batch_size=batch_size,
-        shuffle=(valid_sampler is None),
-        sampler=valid_sampler,
+        shuffle=False,
         collate_fn=collate_fn,
     )
     return train_dataloader, valid_dataloader`
   },
   {
     type: 'code',
-    content: `def train_model(tokenizer_src, tokenizer_tgt, config):
+    content: `def train_model(tokenizer_src, tokenizer_tgt):
     " Launch the training process of a model"
     print("Training process starting...", flush=True)
     
@@ -717,25 +693,20 @@ def create_dataloaders(vocab_src, vocab_tgt,
     train_dataloader, valid_dataloader = create_dataloaders(
         tokenizer_src,
         tokenizer_tgt,
-        batch_size=config["batch_size"],
-        max_padding=config["max_padding"],
-        is_distributed=False,
-        data_path=DATA_PATH
-    )
+        batch_size=CONFIG["batch_size"],
+        max_padding=CONFIG["max_padding"])
 
-    optimizer = torch.optim.Adam(
-        model.parameters(), lr=config["base_lr"], betas=(0.9, 0.98), eps=1e-9
-    )
+    optimizer = torch.optim.Adam(model.parameters(), lr=CONFIG["base_lr"], betas=(0.9, 0.98), eps=1e-9)
     lr_scheduler = LambdaLR(
         optimizer,
         lr_lambda=lambda step: rate(
-            step, config["d_model"], factor=1, warmup=config["warmup"]
-        ),
+            step, CONFIG["d_model"], factor=1, warmup=CONFIG["warmup"]
+        ) # Personalized learning rate
     )
 
     train_losses = []
     valid_losses = []
-    for epoch in range(config["num_epochs"]):
+    for epoch in range(CONFIG["num_epochs"]):
         model.train()
         print(f"Epoch n°{epoch} Training ====", flush=True)
         train_loss = run_epoch(
@@ -745,13 +716,12 @@ def create_dataloaders(vocab_src, vocab_tgt,
             optimizer,
             lr_scheduler,
             mode="train+log",
-            accum_iter=config["accum_iter"],
+            accum_iter=CONFIG["accum_iter"],
         )
         train_losses.append(train_loss.item())
 
         file_path = "checkpoints/%s%.2d.pt" % ("checkpoint_", epoch)
         torch.save(model.state_dict(), file_path)
-        torch.cuda.empty_cache() if torch.cuda.is_available() else None
 
         print(f"Epoch n°{epoch} Validation ====", flush=True)
         model.eval()
@@ -764,9 +734,8 @@ def create_dataloaders(vocab_src, vocab_tgt,
             mode="eval",
         )
         valid_losses.append(sloss.item())
-        print(sloss)
-        torch.cuda.empty_cache() if torch.cuda.is_available() else None
-        
+        print(sloss)    
+            
     plt.figure(figsize=(10, 5))
     plt.plot(train_losses, label='Training Loss')
     plt.plot(valid_losses, label='Validation Loss')
@@ -781,7 +750,7 @@ def create_dataloaders(vocab_src, vocab_tgt,
     content: `if __name__ == "__main__":
     print(f"Dataset found at {DATA_PATH} Initializing training...")
     tokenizer_src, tokenizer_tgt = load_tokenizers(data_path=DATA_PATH) 
-    train_model(tokenizer_src, tokenizer_tgt, CONFIG)`
+    train_model(tokenizer_src, tokenizer_tgt)`
   },
   {
     type: 'markdown',
@@ -809,15 +778,18 @@ def create_dataloaders(vocab_src, vocab_tgt,
   },
   {
     type: 'code',
-    content: `def check_outputs(valid_dataloader, model, tokenizer_src, tokenizer_tgt,
-    n_examples=15, pad_idx=1, eos_string="</s>"):
+    content: `def check_outputs(dataloader, model, tokenizer_src, tokenizer_tgt,
+    n_examples=5, pad_idx=1, eos_string="</s>"):
     "Check the models outputs against the ground truth"
 
     results = [()] * n_examples
+    valid_iter = iter(dataloader) 
+    
     for idx in range(n_examples):
         print("\\nExample %d ========\\n" % idx)
         try:
-            b = next(iter(valid_dataloader))
+            # Get the NEXT batch from the iterator
+            b = next(valid_iter)
         except StopIteration:
             print('No more examples in test set.')
             break
@@ -840,32 +812,25 @@ def create_dataloaders(vocab_src, vocab_tgt,
   },
   {
     type: 'code',
-    content: `# 1. Load Tokenizers
-src_vocab_ckpt = 10049
-tgt_vocab_ckpt = 8974
-model = make_model(src_vocab_ckpt, tgt_vocab_ckpt, N=6)
+    content: `if __name__ == "__main__":
+    tokenizer_src = Tokenizer.from_file("tokenizers/tokenizer_src.json")
+    tokenizer_tgt = Tokenizer.from_file("tokenizers/tokenizer_tgt.json")
+    model = make_model(tokenizer_src.get_vocab_size(), tokenizer_tgt.get_vocab_size(), N=6)
+    checkpoint_path = "checkpoints/checkpoint_05.pt"
+    print(f"Loading {checkpoint_path}...")
 
-# 2. Load your specific checkpoint
-checkpoint_path = "checkpoints/wmt14_model_08.pt"
-print(f"Loading {checkpoint_path}...")
+    # Load the saved weights to the model
+    state_dict = torch.load(checkpoint_path, map_location=torch.device(DEVICE))
+    model.load_state_dict(state_dict)
+    model.to(DEVICE)
+    model.eval()
 
-# Load directly to the correct device
-state_dict = torch.load(checkpoint_path, map_location=torch.device(DEVICE))
-model.load_state_dict(state_dict)
-model.to(DEVICE)
-model.eval()
+    _, valid_dataloader = create_dataloaders(
+        tokenizer_src,
+        tokenizer_tgt,
+        batch_size=32)
 
-# 4. Create Validation DataLoader 
-_, valid_dataloader = create_dataloaders(
-    tokenizer_src,
-    tokenizer_tgt,
-    batch_size=32,
-    data_path=DATA_PATH,
-    is_distributed=False
-)
-
-# 5. Run Verification
-check_outputs(valid_dataloader, model, tokenizer_src, tokenizer_tgt)`
+    check_outputs(valid_dataloader, model, tokenizer_src, tokenizer_tgt)`
   }
 ]);
 
@@ -884,7 +849,60 @@ function renderMarkdown(text) {
 function getHighlightedLines(code) {
   if (!code) return [];
   const highlighted = highlight(code);
-  return highlighted.split('\n');
+  return splitHtmlByLines(highlighted);
+}
+
+function splitHtmlByLines(html) {
+  const lines = [];
+  let currentLine = '';
+  // Stack of open tags to ensure we close/re-open them across lines
+  const tagStack = [];
+  
+  // Regex to match:
+  // 1. Opening span tags: <span class="...">
+  // 2. Closing span tags: </span>
+  // 3. Text content (non-tag characters)
+  const regex = /(<span [^>]+>)|(<\/span>)|([^<]+)/g;
+  
+  let match;
+  while ((match = regex.exec(html)) !== null) {
+    const [full, openTag, closeTag, text] = match;
+    
+    if (openTag) {
+      currentLine += openTag;
+      tagStack.push(openTag);
+    } else if (closeTag) {
+      currentLine += closeTag;
+      tagStack.pop();
+    } else if (text) {
+      const parts = text.split('\n');
+      for (let i = 0; i < parts.length; i++) {
+        const part = parts[i];
+        currentLine += part;
+        
+        // If there are more parts, it means we hit a newline
+        if (i < parts.length - 1) {
+            // Close all currently open tags for the current line
+            // We need to close them in reverse order (LIFO)
+            // Since all our tags are </span>, we just append it
+            for (let j = 0; j < tagStack.length; j++) {
+                currentLine += '</span>';
+            }
+            lines.push(currentLine);
+            currentLine = '';
+            
+            // Re-open all tags for the next line
+            for (let j = 0; j < tagStack.length; j++) {
+                currentLine += tagStack[j];
+            }
+        }
+      }
+    }
+  }
+  
+  lines.push(currentLine);
+  
+  return lines;
 }
 
 function highlight(code) {
@@ -904,6 +922,8 @@ function highlight(code) {
     return `___TOKEN_${id}___`;
   }
 
+  // Mask Triple Strings
+  safeCode = safeCode.replace(/("""[\s\S]*?"""|'''[\s\S]*?''')/g, match => store(match, 'string'));
   // Mask Strings
   safeCode = safeCode.replace(/(".*?"|'.*?')/g, match => store(match, 'string'));
   // Mask Comments
