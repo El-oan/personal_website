@@ -83,15 +83,16 @@
           <div class="card-meta">Machine Learning • Work in progress</div>
           <div class="card-desc">
             An implementation of the Transformer architecture, following the 
-            <em>Attention Is All You Need</em> paper, with some adjustements. 
-            Uses multi-head attention, positional encoding, residual connections, 
-            layer normalization. Trained on Kaggle's GPUs.
+            <em>Attention Is All You Need</em> paper, with some improvements. 
+            Uses multi-head attention, positional encoding, Deepseek's 
+            mHC connections, RMS normalization. Trained on Kaggle's GPUs.
             Work in progress.
           </div>
           <div class="tags-row">
             <div class="tags">
               <span class="tag">Python</span>
               <span class="tag">PyTorch</span>
+              <span class="tag">Jupyter</span>
             </div>
             <a class="card-button" href="/notebook">notebook</a>
           </div>

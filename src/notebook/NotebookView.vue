@@ -12,21 +12,21 @@
         
         <!-- Markdown Cell -->
         <template v-if="cell.type === 'markdown'">
-          <div class="cell markdown-cell" style="width: 100%">
-            <div v-html="renderMarkdown(cell.content)"></div>
-          </div>
+            <div class="cell markdown-cell" style="width: 100%">
+              <div v-html="renderMarkdown(cell.content)"></div>
+            </div>
         </template>
 
         <!-- Code Cell -->
         <template v-else>
-          <div class="input-prompt">[{{ index }}]</div>
-          <div class="cell code-cell-container">
-            <!-- Row-based rendering for hover effect -->
-            <div v-for="(lineHtml, i) in getHighlightedLines(cell.content)" :key="i" class="code-row">
-              <div class="line-number">{{ i + 1 }}</div>
-              <div class="line-content" v-html="lineHtml"></div>
+            <div class="input-prompt">[{{ index }}]</div>
+            <div class="cell code-cell-container">
+              <!-- Row-based rendering for hover effect -->
+              <div v-for="(lineHtml, i) in getHighlightedLines(cell.content)" :key="i" class="code-row">
+                <div class="line-number">{{ i + 1 }}</div>
+                <div class="line-content" v-html="lineHtml"></div>
+              </div>
             </div>
-          </div>
         </template>
 
       </div>
@@ -51,7 +51,23 @@ onBeforeUnmount(() => {
 const cells = ref([
   {
     type: 'markdown',
-    content: `In this notebook, we will implement the Transformer architecture.\nStarting point: [Annotated Transformer](https://nlp.seas.harvard.edu/annotated-transformer/)\n\n`
+    content: `
+In this notebook, we will implement the Transformer architecture on a french-english translation problem.
+Starting point: https://nlp.seas.harvard.edu/annotated-transformer/
+
+mHC implementation from: https://medium.com/@ahmealy/deepseeks-manifold-constrained-hyper-connections-explained-simply-with-numeric-examples-713f1e5d3a70
+
+We write our dimensions as such:
+- B the batch dimension (amount of sentences)
+- L the sentence length (amount of tokens per sentence)
+- D the feature dimension (amount of details per token)
+- S the amount of streams (versions of the same token)
+- H the amount of heads (amount of tuples Q,K,V)
+- V the vocabulary size (the lenght of the tokenizer)
+
+Our tensors flowing through the hidden states will be of shape (B, L, S, D). Before entering the network, they will be of size (B, L, D), then cloned into S streams, and at the end the streams will be averaged to return to (B, L, D) to compute probabilities for each word of V.
+
+Planned features: RoPE, MoE, SwiGLU, Sparse and Flash attention, Engram`
   },
   {
     type: 'code',
@@ -59,14 +75,13 @@ const cells = ref([
 import copy
 import time
 import math
-
 import matplotlib.pyplot as plt
 import pandas as pd
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 
 from torch.optim.lr_scheduler import LambdaLR
-from torch.nn.functional import pad, log_softmax
 from torch.utils.data import DataLoader`
   },
   {
@@ -76,14 +91,16 @@ DEVICE = "mps"
 
 CONFIG = {
     "batch_size": 32,
-    "d_model": 512,
-    "vocab_size": 32000,
-    "dataset_lenght": 100000,  # Lines of the CSV dataset
-    "num_epochs": 5,
-    "accum_iter": 10,  # Amount of batches computed before incrementing the weights
-    "base_lr": 1.0,  # Learning rate
-    "max_padding": 72,
-    "warmup": 3000  # Linear increase of the learning rate
+    "feature_amount": 512, # how precise our tokens are
+    "vocab_size": 32000,  # amount of distinct chunks of words
+    "dataset_lenght": 100000,  # lines of the CSV dataset
+    "head_amount": 8, # each head is a question/answer space
+    "stream_amount": 4, # amount of evil twins for each token
+    "num_epochs": 7,
+    "accum_iter": 10,  # amount of batches computed before incrementing the weights
+    "base_lr": 1.0,  # learning rate scaler
+    "max_padding": 72, # length of sentences, filled with paddings to reach it
+    "warmup": 3000  # linear increase of the learning rate
 }`
   },
   {
@@ -100,32 +117,54 @@ CONFIG = {
         self.generator = generator
 
     def forward(self, src, tgt, src_mask, tgt_mask):
-        # src: (N, L)
-        # tgt: (N, L)
-        # src_mask: (N, 1, L)
-        # tgt_mask: (N, 1, L, L)
-        "Take in and process masked src and target sequences."
+        # src: (B, L)
+        # tgt: (B, L-1)
+        # src_mask: (B, 1, L), to hide <pad>
+        # tgt_mask: (B, 1, L-1, L-1), to hide <pad> and future tokens
         return self.decode(self.encode(src, src_mask), src_mask, tgt, tgt_mask)
 
     def encode(self, src, src_mask):
-        return self.encoder(self.src_embed(src), src_mask)
+        x = self.src_embed(src) # x: (B, L, D)
+        B, L, D = x.shape
+        S = self.encoder.stream_amount
+        x = x.unsqueeze(2).expand(B, L, S, D) # x: (B, L, S, D)
+        return self.encoder(x, src_mask)
 
     def decode(self, memory, src_mask, tgt, tgt_mask):
-        return self.decoder(self.tgt_embed(tgt), memory, src_mask, tgt_mask)`
+        # memory: (B, L, S*D)
+        B, L, SD = memory.shape
+        S = self.decoder.stream_amount
+        
+        memory = memory.view(B, L, S, SD // S) # memory: (B, L, S, D)
+        memory = memory.mean(dim=2) # average memory over streams 
+        memory = memory.unsqueeze(2) # memory: (B, L, 1, D)
+
+        x = self.tgt_embed(tgt)
+        x = x.unsqueeze(2).expand(B, L-1, S, SD // S)
+        return self.decoder(x, memory, src_mask, tgt_mask)`
+  },
+  {
+    type: 'code',
+    content: `def xavier_init(module):
+    "Helper to initialize weights with Xavier uniform, ignoring biaises and scalars."
+    for p in module.parameters():
+        if p.dim() > 1:
+            nn.init.xavier_uniform_(p)`
   },
   {
     type: 'code',
     content: `class Generator(nn.Module):
     "Define standard linear + softmax generation step. Final step."
 
-    def __init__(self, d_model, vocab):
+    def __init__(self, feature_amount, vocab):
         super().__init__()
-        self.proj = nn.Linear(d_model, vocab)
+        self.proj = nn.Linear(feature_amount, vocab)
+        xavier_init(self)
 
     def forward(self, x):
-        # x: (N, L, D)
-        # output: (N, L, V)
-        probability = log_softmax(self.proj(x), dim=-1)
+        # x: (B, L, S, D)
+        # output: (B, L, V)
+        probability = F.log_softmax(self.proj(x), dim=-1)
         return probability`
   },
   {
@@ -137,80 +176,112 @@ CONFIG = {
   {
     type: 'code',
     content: `class Encoder(nn.Module):
-    "Core encoder is a stack of N layers"
+    """
+    Encoder is a stack of N layers, each layer containing a multi-head 
+    self-attention sublayer, a feed-forward sublayer, connected by mHconnections. 
+    """
 
-    def __init__(self, layer, N):
+    def __init__(self, layer, N, stream_amount=4):
         super().__init__()
+        river_size = layer.feature_amount*stream_amount
         self.layers = clones(layer, N)
-        self.norm = LayerNorm(layer.feature_amount)
+        self.norm = RMSNorm(river_size)
+        self.stream_amount = stream_amount
 
     def forward(self, x, mask):
-        # x: (N, L, D)
-        # mask: (N, 1, L)
-        # output: (N, L, D)
+        # x: (B, L, S, D)
+        # mask: (B, 1, L)
         "Pass the input (and mask) through each layer in turn."
         for layer in self.layers:
             x = layer(x, mask)
-            # There's one normalization per encoder layer
-        return self.norm(x)`
+        return self.norm(x.flatten(start_dim=2).contiguous()) # x: (B, L, S*D)`
   },
   {
     type: 'code',
-    content: `class LayerNorm(nn.Module):
-    "Construct a layernorm module."
-
-    def __init__(self, feature_amount, eps=1e-6):
+    content: `class RMSNorm(nn.Module):
+    "Only scale by root mean square. Computationaly more efficient. Doesn't hurt performance."
+    def __init__(self, river_size, eps=1e-6):
         super().__init__()
-        self.scale = nn.Parameter(torch.ones(feature_amount))
-        self.offset = nn.Parameter(torch.zeros(feature_amount))
-        self.eps = eps  # To not divide by zero
+        self.scale = nn.Parameter(torch.ones(river_size))
+        self.eps = eps
 
     def forward(self, x):
-        # x: (N, L, D)
-        # output: (N, L, D)
-        mean = x.mean(-1, keepdim=True)
-        std = x.std(-1, keepdim=True)
-        return self.scale * (x - mean) / (std + self.eps) + self.offset`
+        # x: (B, L, S*D)
+        rms = torch.sqrt(x.pow(2).mean(-1, keepdim=True) + self.eps)
+        return self.scale * (x / rms)`
   },
   {
     type: 'code',
-    content: `class ResidualConnection(nn.Module):
+    content: `def make_doubly_stochastic(matrix, iterations=20): # Sinkhorn-Knopp algorithm
+    M = torch.exp(matrix)  # exponentiation ensures positivity
+    for i in range(iterations): # alternate row and column normalization
+        M = M / M.sum(dim=-1, keepdim=True)
+        M = M / M.sum(dim=-2, keepdim=True)   
+    return M`
+  },
+  {
+    type: 'code',
+    content: `class mHConnection(nn.Module):
     """
-    A residual connection followed by a layer norm.
-    Note for code simplicity the norm is first as opposed to last.
+    The newest Deepseek implementation of the mHC, replacing residual connection.
+    Implement three matrices, mixing streams after every layer.
     """
 
-    def __init__(self, feature_amount, dropout_rate):
+    def __init__(self, stream_amount, feature_amount, dropout_rate=0.1):
         super().__init__()
-        self.norm = LayerNorm(feature_amount)
+        river_size = stream_amount*feature_amount
+        self.river_size = river_size
+        self.norm = RMSNorm(river_size)
         self.dropout = nn.Dropout(dropout_rate) 
-        # Zeros randomly a part of the weights during training (not inference)
+        
+        self.alpha_pre = nn.Parameter(torch.tensor(0.01))
+        self.alpha_post = nn.Parameter(torch.tensor(0.01))
+        self.alpha_res = nn.Parameter(torch.tensor(0.01))
+        
+        self.phi_pre = nn.Parameter(torch.empty(river_size, stream_amount))
+        self.phi_post = nn.Parameter(torch.empty(river_size, stream_amount))
+        self.phi_res = nn.Parameter(torch.empty(river_size, stream_amount, stream_amount))
+        xavier_init(self)
 
+        self.biais_pre = nn.Parameter(torch.zeros(stream_amount))
+        self.biais_post = nn.Parameter(torch.zeros(stream_amount))
+        self.biais_res = nn.Parameter(torch.eye(stream_amount) * 5) # bias: (S, S)
+        # 5 is the default value in the Deepseek paper
+        
     def forward(self, x, sublayer):
-        # x: (N, L, D)
-        # sublayer: function (N, L, D) -> (N, L, D)
-        # output: (N, L, D)
-        "Apply residual connection to any sublayer with the same size."
-        return x + self.dropout(sublayer(self.norm(x)))`
+        # x: (B, L, S, D)
+        B, L, S, D = x.shape
+        x_river = x.flatten(start_dim=2) # shape: (B, L, S*D)
+        x_river = self.norm(x_river) # normalize over all versions of the token
+
+        H_pre = self.alpha_pre * x_river@self.phi_pre + self.biais_pre
+        H_post = self.alpha_post * x_river@self.phi_post + self.biais_post
+        H_res = self.alpha_res * torch.einsum('bld,dst->blst', x_river, self.phi_res) + self.biais_res
+
+        H_pre = F.sigmoid(H_pre).unsqueeze(2) # shape: (B, L, 1, S)
+        H_post = 2*F.sigmoid(H_post).unsqueeze(3) # shape: (B, L, S, 1)
+        H_res = make_doubly_stochastic(H_res) # shape: (B, L, S, S)
+        
+        # sublayer: (B, L, 1, D) -> (B, L, 1, D)
+        x_norm = x_river.view(B, L, S, D)
+        return H_res@x + H_post@self.dropout(sublayer(H_pre@x_norm))`
   },
   {
     type: 'code',
     content: `class EncoderLayer(nn.Module):
     "Encoder is made up of self-attention and feed forward"
-
-    def __init__(self, feature_amount, self_attn, feed_forward, dropout_rate):
+    def __init__(self, feature_amount, stream_amount, self_attn, feed_forward, dropout_rate):
         super().__init__()
         self.self_attn = self_attn
         self.feed_forward = feed_forward
-        self.sublayer = clones(ResidualConnection(feature_amount, dropout_rate), 2)
+        self.sublayer = clones(mHConnection(stream_amount, feature_amount, dropout_rate), 2)
         self.feature_amount = feature_amount
 
     def forward(self, x, mask):
-        # x: (N, L, D)
-        # mask: (N, 1, L)
-        # output: (N, L, D)
-        x = self.sublayer[0](x, lambda x: self.self_attn(x, x, x, mask))
-        x = self.sublayer[1](x, self.feed_forward)
+        # x: (B, L, S, D)
+        # mask: (B, 1, L)
+        x = self.sublayer[0](x, lambda x: self.self_attn(x, x, x, mask)) # attention
+        x = self.sublayer[1](x, self.feed_forward)  # feed forward
         return x`
   },
   {
@@ -218,40 +289,45 @@ CONFIG = {
     content: `class Decoder(nn.Module):
     "Generic N layer decoder with masking."
 
-    def __init__(self, layer, N):
+    def __init__(self, layer, N, stream_amount=4):
         super().__init__()
+        river_size = stream_amount*layer.feature_amount
         self.layers = clones(layer, N)
-        self.norm = LayerNorm(layer.feature_amount)
+        self.norm = RMSNorm(river_size)
+        self.stream_amount = stream_amount
 
     def forward(self, x, memory, src_mask, tgt_mask):
-        # x: (N, L, D)
-        # memory: (N, L_src, D)
-        # src_mask: (N, 1, L_src)
-        # tgt_mask: (N, 1, L, L)
-        # output: (N, L, D)
+        # x: (B, L, S, D)
+        # memory: (B, L_src, S, D)
+        # src_mask: (B, 1, L_src)
+        # tgt_mask: (B, 1, L, L)
         for layer in self.layers:
             x = layer(x, memory, src_mask, tgt_mask)
-        return self.norm(x)`
+        
+        x = self.norm(x.flatten(start_dim=2)) # shape: (B, L, S*D)
+        B, L, SD = x.shape
+        S = self.stream_amount
+        x = x.view(B, L, S, SD // S).mean(dim=2) # shape: (B, L, D)
+        return x`
   },
   {
     type: 'code',
     content: `class DecoderLayer(nn.Module):
     "Decoder is made of 3 layers: self-attention, source-attention, and feed forward"
-
-    def __init__(self, feature_amount, self_attn, src_attn, feed_forward, dropout_rate):
+    def __init__(self, feature_amount, stream_amount,self_attn, src_attn, feed_forward, dropout_rate=0.1):
         super().__init__()
-        self.feature_amount = feature_amount
         self.self_attn = self_attn
         self.src_attn = src_attn
         self.feed_forward = feed_forward
-        self.sublayer = clones(ResidualConnection(feature_amount, dropout_rate), 3)
+        self.sublayer = clones(mHConnection(stream_amount, feature_amount, dropout_rate), 3)
+        self.feature_amount = feature_amount
 
     def forward(self, x, memory, src_mask, tgt_mask):
-        # x: (N, L, D)
-        # memory: (N, L_src, D)
-        # src_mask: (N, 1, L_src)
-        # tgt_mask: (N, 1, L, L)
-        # output: (N, L, D)
+        # x: (B, L, S, D)
+        # memory: (B, L_src, S, D)
+        # src_mask: (B, 1, L_src)
+        # tgt_mask: (B, 1, L, L)
+        # output: (B, L, S, D)
         m = memory
         x = self.sublayer[0](x, lambda x: self.self_attn(x, x, x, tgt_mask))
         x = self.sublayer[1](x, lambda x: self.src_attn(x, m, m, src_mask))
@@ -262,26 +338,25 @@ CONFIG = {
     type: 'code',
     content: `def subsequent_mask(sentence_length):
     "Mask out subsequent positions."
-
     attn_shape = (1, sentence_length, sentence_length)
     subsequent_mask = torch.triu(torch.ones(attn_shape), diagonal=1)
-    # Zeros everything under the first line above the diagonal of the matrix
+    # zeros everything under the first line above the diagonal of the matrix
     mask = (subsequent_mask == 0) # True/False instead of 0/1
     return mask`
   },
   {
     type: 'code',
     content: `def attention(query, key, value, mask=None, dropout=None):
-    "Compute Scaled Dot Product Attention"
+    "Compute the scaled dot product between query and key, and distribute the scores on value"
 
-    d_k = query.size(-1)  # Query/key smaller space dimension (divider of d_model)
+    d_k = query.size(-1)  # query/key smaller head space dimension (divider of feature_amount)
     scores = torch.matmul(query, key.transpose(-2, -1)) / math.sqrt(d_k)
-    # Divide by sqrt(d_k) to not reach softmax plateau where gradient is close to 0
+    # divide by sqrt(d_k) to not reach softmax plateau where gradient is almost zero
 
     if mask is not None:
         scores = scores.masked_fill(mask == 0, -1e9)
         
-    p_attn = scores.softmax(dim=-1)
+    p_attn = scores.softmax(dim=-1) # probability of key answering query
     if dropout is not None:
         p_attn = dropout(p_attn)
 
@@ -295,58 +370,55 @@ CONFIG = {
     and then apply specialized attention in each of them
     """
 
-    def __init__(self, head_amount, d_model, dropout_rate=0.1):
-        "Take in model size and number of heads."
+    def __init__(self, head_amount, feature_amount, dropout_rate=0.1):
         super().__init__()
-        assert d_model % head_amount == 0
-        self.d_k = d_model // head_amount # d_model = head_amount * d_k
+        self.head_dimension = feature_amount // head_amount # feature_amount = head_amount * head_dimension
         self.head_amount = head_amount
-        self.linears = clones(nn.Linear(d_model, d_model), 4)
+        self.linears = clones(nn.Linear(feature_amount, feature_amount), 4) # Q, K, V, Out 
         self.attn = None
         self.dropout = nn.Dropout(dropout_rate)
+        xavier_init(self)
 
     def forward(self, query, key, value, mask=None):
-        # query, key, value: (N, L, D)
-        # mask: (N, 1, L)
-        # output: (N, L, D)
+        # query, key, value: (B, L, 1, D)
+        # mask: (B, 1, L)
+        B, L, _, D = query.size()
+
         if mask is not None:
-            mask = mask.unsqueeze(1)
-        nbatches = query.size(0)
+            mask = mask.unsqueeze(1) # mask: (B, 1, 1, L)
+            
+        # MPS FIX: Ensure 3D input for Linear layers (B, L, D) instead of (B, L, 1, D)
+        query = query.view(B, -1, D)
+        key = key.view(B, -1, D)
+        value = value.view(B, -1, D)
 
-        # 1) Do all the linear projections in batch from d_model => h x d_k
         query, key, value = [
-            lin(x).view(nbatches, -1, self.head_amount, self.d_k).transpose(1, 2)
+            lin(x).view(B, -1, self.head_amount, self.head_dimension).transpose(1, 2)
             for lin, x in zip(self.linears, (query, key, value))
-        ]
+        ] # q, k, v: (B, H, L, D/H)
+        # we use -1 instead of L because it can be either L or L-1
 
-        # 2) Apply attention on all the projected vectors in batch.
-        x, self.attn = attention(
-            query, key, value, mask=mask, dropout=self.dropout
-        )
-
-        # 3) "Concat" using a view and apply a final linear.
-        x = (
-            x.transpose(1, 2)
-            .contiguous()
-            .view(nbatches, -1, self.head_amount * self.d_k)
-        )
+        x, self.attn = attention(query, key, value, mask=mask, dropout=self.dropout)
         
-        return self.linears[-1](x)`
+        # MPS FIX: Flatten to 3D for final linear layer (B, L, D)
+        x = x.transpose(1, 2).reshape(B, L, self.head_amount * self.head_dimension)
+        
+        return self.linears[3](x).unsqueeze(2) # apply final linear projection and restore 4D`
   },
   {
     type: 'code',
     content: `class PositionwiseFeedForward(nn.Module):
-    "Implements FFN equation, composed of 2 fully connected layers"
+    "Implements FFN bloc, composed of 2 fully connected layers"
 
-    def __init__(self, d_model, d_ff, dropout_rate=0.1):
+    def __init__(self, feature_amount, d_ff, dropout_rate=0.1):
         super().__init__()
-        self.w_1 = nn.Linear(d_model, d_ff)
-        self.w_2 = nn.Linear(d_ff, d_model)
+        self.w_1 = nn.Linear(feature_amount, d_ff) # d_ff is usually 4 times feature_amount
+        self.w_2 = nn.Linear(d_ff, feature_amount)
         self.dropout = nn.Dropout(dropout_rate)
+        xavier_init(self)
 
     def forward(self, x):
-        # x: (N, L, D)
-        # output: (N, L, D)
+        # x: (B, L, 1, D)
         x = self.w_1(x)
         x = x.relu()
         x = self.dropout(x)
@@ -367,7 +439,7 @@ CONFIG = {
         x = self.generator(x)
         loss = (
             self.criterion(x.reshape(-1, x.size(-1)), y.reshape(-1))
-            / norm  # Average loss per token
+            / norm  # average loss per token
         )
         return loss.data * norm, loss 
         # we return the unscaled loss too to reaverage over an epoch later on`
@@ -375,59 +447,53 @@ CONFIG = {
   {
     type: 'code',
     content: `class PositionalEncoding(nn.Module):
-    "Implement the PE function."
+    "Implement the PE function, before we split tokens into streams."
 
-    def __init__(self, d_model, dropout, max_len=5000):
+    def __init__(self, feature_amount, dropout_rate, max_len=5000):
         super().__init__()
-        self.dropout = nn.Dropout(p=dropout)
+        self.dropout = nn.Dropout(dropout_rate)
 
-        # Compute the positional encodings once in log space.
-        pe = torch.zeros(max_len, d_model)
+        # compute the positional encodings once in log space.
+        pe = torch.zeros(max_len, feature_amount)
         position = torch.arange(0, max_len).unsqueeze(1)
-        div_term = torch.exp(
-            torch.arange(0, d_model, 2) * -(math.log(10000.0) / d_model)
-        )
+        div_term = torch.exp(torch.arange(0, feature_amount, 2) * -(math.log(10000.0) / feature_amount))
         pe[:, 0::2] = torch.sin(position * div_term)
         pe[:, 1::2] = torch.cos(position * div_term)
         pe = pe.unsqueeze(0)
         self.register_buffer("pe", pe)
 
     def forward(self, x):
-        # x: (N, L, D)
-        # output: (N, L, D)
-        x = x + self.pe[:, : x.size(1)].requires_grad_(False)
+        # x: (B, L, D)
+        # output: (B, L, D)
+        x = x + self.pe[:, :x.size(1)].requires_grad_(False)
         x = self.dropout(x)
         return x`
   },
   {
     type: 'code',
-    content: `def make_model(src_vocab, tgt_vocab, N=6, d_model=512, d_ff=2048, h=8, dropout_rate=0.1):
-    "Helper: Construct a model from hyperparameters."
-    
-    c = copy.deepcopy # Basically creates a class out of an instance
-    attn = MultiHeadedAttention(h, d_model)
-    ff = PositionwiseFeedForward(d_model, d_ff, dropout_rate)
-    position = PositionalEncoding(d_model, dropout_rate)
+    content: `def make_model(src_vocab, tgt_vocab, stream_amount=4, N=6, feature_amount=512, d_ff=2048, h=8, dropout_rate=0.1):
+    "Construct an instance of the model from hyperparameters."
+
+    river_size = feature_amount*stream_amount
+    c = copy.deepcopy # basically creates a class out of an instance
+    attn = MultiHeadedAttention(h, feature_amount)
+    ff = PositionwiseFeedForward(feature_amount, d_ff, dropout_rate)
+    position = PositionalEncoding(feature_amount, dropout_rate)
 
     model = EncoderDecoder(
-        Encoder(EncoderLayer(d_model, c(attn), c(ff), dropout_rate), N),
-        Decoder(DecoderLayer(d_model, c(attn), c(attn), c(ff), dropout_rate), N),
-        nn.Sequential(Embeddings(d_model, src_vocab), c(position)),
-        nn.Sequential(Embeddings(d_model, tgt_vocab), c(position)),
-        Generator(d_model, tgt_vocab),
+        Encoder(EncoderLayer(feature_amount, stream_amount, c(attn), c(ff), dropout_rate), N),
+        Decoder(DecoderLayer(feature_amount, stream_amount, c(attn), c(attn), c(ff), dropout_rate), N),
+        nn.Sequential(Embeddings(feature_amount, src_vocab), c(position)),
+        nn.Sequential(Embeddings(feature_amount, tgt_vocab), c(position)),
+        Generator(feature_amount, tgt_vocab),
     )
 
-    # Initialize parameters with Glorot / fan_avg.
-    for p in model.parameters():
-        if p.dim() > 1:
-            nn.init.xavier_uniform_(p)
     return model`
   },
   {
     type: 'code',
     content: `class Batch:
-    """Object for holding a batch of data with mask during training."""
-
+    "Object for holding a batch of data with mask during training."
     def __init__(self, src, tgt=None, pad=2):  # 2 = <blank>
         self.src = src
         self.src_mask = (src != pad).unsqueeze(-2)
@@ -441,9 +507,7 @@ CONFIG = {
     def make_std_mask(tgt, pad):
         "Create a mask to hide padding and future words."
         tgt_mask = (tgt != pad).unsqueeze(-2)
-        tgt_mask = tgt_mask & subsequent_mask(tgt.size(-1)).type_as(
-            tgt_mask.data
-        )
+        tgt_mask = tgt_mask & subsequent_mask(tgt.size(-1)).type_as(tgt_mask.data)
         return tgt_mask`
   },
   {
@@ -452,9 +516,7 @@ CONFIG = {
     "Adaptive step rate, linear warmup, then square root decay"
     if step == 0:
         step = 1
-    rate = factor * (
-        model_size ** (-0.5) * min(step ** (-0.5), step * warmup ** (-1.5))
-    )
+    rate = factor * (model_size ** (-0.5) * min(step ** (-0.5), step * warmup ** (-1.5)))
     return rate`
   },
   {
@@ -505,10 +567,40 @@ from tokenizers.decoders import Metaspace as MetaspaceDecoder`
     df = pd.read_csv(
         data_path, 
         engine='python',        # Robust parser
-        encoding='utf-8',
         on_bad_lines='skip',
         nrows=CONFIG['dataset_lenght']
     )    
+    
+    def clean(text):
+        if not isinstance(text, str): return text
+        replacements = {
+            "Ã©": "é", 
+            "Ã¨": "è", 
+            "Ã ": "à", 
+            "Ã ": "à", 
+            "Ã´": "ô", 
+            "Ã»": "û", 
+            "Ã¯": "ï",
+            "Ã¹": "ù", 
+            "Ãî": "î", 
+            "Ã‰": "É", 
+            "Â ": " ",      
+            "â–": "_",  
+            "Â»": "»", 
+            "Â«": "«",  
+            "Ã§": "ç",
+            "Ã®": "î",
+            "Ãª": "ê",
+            "Ã€": "À",
+            "Ã‡": "Ç"
+        }
+        for bad, good in replacements.items():
+            text = text.replace(bad, good)
+        return text
+
+    df['fr'] = df['fr'].apply(clean)
+    df['en'] = df['en'].apply(clean)
+    
     train_src = df['fr'].tolist() # Source is French
     train_tgt = df['en'].tolist() # Target is English
     return train_src, train_tgt`
@@ -516,15 +608,16 @@ from tokenizers.decoders import Metaspace as MetaspaceDecoder`
   {
     type: 'code',
     content: `def train_tokenizer(data, vocab_size, min_frequency=2):
+    "Construct a tokenizer using Byte-Pair Encoding"
 
     tokenizer = Tokenizer(BPE(unk_token="<unk>"))
-    tokenizer.pre_tokenizer = Metaspace()
+    tokenizer.pre_tokenizer = Metaspace(replacement="_") # use _ for spaces
     trainer = BpeTrainer(special_tokens=["<s>", "<pad>", "</s>", "<unk>"], 
                          vocab_size=vocab_size, 
                          min_frequency=min_frequency)
     tokenizer.train_from_iterator(data, trainer)
     
-    # Post-processing: Add <s> at start and end
+    # post-processing: add <s> at start and end
     tokenizer.post_processor = TemplateProcessing(
         single="<s> $A </s>",
         pair="<s> $A </s> $B:1 </s>:1",
@@ -533,43 +626,33 @@ from tokenizers.decoders import Metaspace as MetaspaceDecoder`
             ("</s>", tokenizer.token_to_id("</s>")),
         ],
     )
-    tokenizer.decoder = MetaspaceDecoder()
+    tokenizer.decoder = MetaspaceDecoder(replacement="_")
     return tokenizer`
   },
   {
     type: 'code',
     content: `def load_tokenizers(data_path=DATA_PATH):
     "Read the csv and returns two JSON containing the tokenizers"
-
-    df = pd.read_csv(
-                data_path, 
-                nrows=CONFIG['dataset_lenght'],     # The training file is too big
-                engine='python',        # Robust parser
-        encoding='utf-8',
-                on_bad_lines='skip'     
-            )
-
-    train_src = df['fr'].tolist() # Source is French
-    train_tgt = df['en'].tolist() # Target is English
+    train_src, train_tgt = load_data(data_path=DATA_PATH)
     tokenizer_src = train_tokenizer(train_src, vocab_size=CONFIG['vocab_size'])
     tokenizer_tgt = train_tokenizer(train_tgt, vocab_size=CONFIG['vocab_size'])
     tokenizer_src.save("tokenizers/tokenizer_src.json")
     tokenizer_tgt.save("tokenizers/tokenizer_tgt.json")
-
     return tokenizer_src, tokenizer_tgt`
   },
   {
     type: 'code',
     content: `class Embeddings(nn.Module):
-    def __init__(self, d_model, vocab):
+    def __init__(self, feature_amount, vocab):
         super().__init__()
-        self.embedding_table = nn.Embedding(vocab, d_model)
-        self.d_model = d_model
+        self.embedding_table = nn.Embedding(vocab, feature_amount)
+        self.feature_amount = feature_amount
+        xavier_init(self)
 
     def forward(self, x):
-        # x: (N, L) (indices)
-        # output: (N, L, D)
-        return self.embedding_table(x) * math.sqrt(self.d_model)`
+        # x: (B, L) (indices)
+        # output: (B, L, S, d)
+        return self.embedding_table(x) * math.sqrt(self.feature_amount)`
   },
   {
     type: 'markdown',
@@ -582,19 +665,19 @@ from tokenizers.decoders import Metaspace as MetaspaceDecoder`
     "Runs one epoch, either for training, either validation"
     
     start = time.time()
-    total_tokens = 0
-    total_loss = 0
-    tokens = 0
-    n_accum = 0
+    total_tokens, total_loss, tokens, n_accum = 0, 0, 0, 0
+    loss_list, grad_norms = [], []
 
     for i, batch in enumerate(data_iter):
         out = model.forward(batch.src, batch.tgt, batch.src_mask, batch.tgt_mask)
         loss, loss_node = loss_compute(out, batch.tgt_y, batch.ntokens)
 
         if mode == "train":
-            loss_node.backward()
+            (loss_node / accum_iter).backward()
             if i % accum_iter == 0:
                 if optimizer is not None:
+                    norm = torch.nn.utils.clip_grad_norm_(model.parameters(), float('inf'))
+                    grad_norms.append(norm.item())
                     optimizer.step()
                     optimizer.zero_grad(set_to_none=True)
                 n_accum += 1
@@ -604,19 +687,19 @@ from tokenizers.decoders import Metaspace as MetaspaceDecoder`
         total_loss += loss
         total_tokens += batch.ntokens
         tokens += batch.ntokens
+        loss_list.append((loss / batch.ntokens).item())
 
-        if i % 40 == 1 and (mode == "train"):
+        if i % 40 == 1 and (mode == "train"): # print every 40 batches
             lr = optimizer.param_groups[0]["lr"]
             elapsed = time.time() - start
             print(
-                ("Epoch Step: %6d | Accumulation Step: %3d | Loss: %6.2f "
-                    + "| Tokens / Sec: %7.1f | Learning Rate: %6.1e")
+                ("Epoch: %6d | Accum. Step: %3d | Loss: %6.2f " + "| Tokens/sec: %7.1f | Learn. Rate: %6.1e")
                 % (i, n_accum, loss / batch.ntokens, tokens / elapsed, lr)
             )
             start = time.time()
             tokens = 0
 
-    return total_loss / total_tokens`
+    return loss_list, grad_norms`
   },
   {
     type: 'code',
@@ -630,9 +713,9 @@ from tokenizers.decoders import Metaspace as MetaspaceDecoder`
         src_tensor = torch.tensor(encoded_src, dtype=torch.int64, device=DEVICE)
         tgt_tensor = torch.tensor(encoded_tgt, dtype=torch.int64, device=DEVICE)
 
-        # Pad to fixed length
-        src_list.append(pad(src_tensor, (0, max_padding - len(src_tensor)), value=pad_id))
-        tgt_list.append(pad(tgt_tensor, (0, max_padding - len(tgt_tensor)), value=pad_id))
+        # pad to reach max length
+        src_list.append(F.pad(src_tensor, (0, max_padding - len(src_tensor)), value=pad_id))
+        tgt_list.append(F.pad(tgt_tensor, (0, max_padding - len(tgt_tensor)), value=pad_id))
 
     src = torch.stack(src_list)
     tgt = torch.stack(tgt_list)
@@ -642,10 +725,8 @@ from tokenizers.decoders import Metaspace as MetaspaceDecoder`
     type: 'code',
     content: `def create_dataloaders(vocab_src, vocab_tgt, batch_size=12000, max_padding=128):
     "Instantiate the dataloaders for training and validation"
-
-    # Get Pad ID dynamically
-    pad_id = vocab_src.token_to_id("<pad>")
-
+  
+    pad_id = vocab_src.token_to_id("<pad>") # get pad ID dynamically
     def collate_fn(batch):
         return collate_batch(
             batch,
@@ -660,7 +741,6 @@ from tokenizers.decoders import Metaspace as MetaspaceDecoder`
     train_iter = list(zip(train_src[:split_idx], train_tgt[:split_idx]))
     valid_iter = list(zip(train_src[split_idx:], train_tgt[split_idx:]))
 
-    # DataLoaders
     train_dataloader = DataLoader(
         train_iter,
         batch_size=batch_size,
@@ -682,9 +762,8 @@ from tokenizers.decoders import Metaspace as MetaspaceDecoder`
     print("Training process starting...", flush=True)
     
     pad_idx = tokenizer_tgt.token_to_id("<pad>")
-    model = make_model(tokenizer_src.get_vocab_size(), tokenizer_tgt.get_vocab_size(), N=6)
+    model = make_model(tokenizer_src.get_vocab_size(), tokenizer_tgt.get_vocab_size())
     device = torch.device(DEVICE)
-    print(f"Using device: {device}")
     model.to(device)
     
     criterion = LabelSmoothing(feature_amount=tokenizer_tgt.get_vocab_size(), padding_idx=pad_idx, smoothing=0.1)
@@ -700,32 +779,32 @@ from tokenizers.decoders import Metaspace as MetaspaceDecoder`
     lr_scheduler = LambdaLR(
         optimizer,
         lr_lambda=lambda step: rate(
-            step, CONFIG["d_model"], factor=1, warmup=CONFIG["warmup"]
-        ) # Personalized learning rate
+            step, CONFIG["feature_amount"], factor=1, warmup=CONFIG["warmup"]
+        ) # personalized learning rate
     )
 
-    train_losses = []
-    valid_losses = []
+    train_losses, valid_losses, all_grad_norms = [], [], []
     for epoch in range(CONFIG["num_epochs"]):
         model.train()
         print(f"Epoch n°{epoch} Training ====", flush=True)
-        train_loss = run_epoch(
+        loss_list, grad_norms = run_epoch(
             (Batch(b[0], b[1], pad_idx) for b in train_dataloader),
             model,
             SimpleLossCompute(model.generator, criterion),
             optimizer,
             lr_scheduler,
-            mode="train+log",
+            mode="train",
             accum_iter=CONFIG["accum_iter"],
         )
-        train_losses.append(train_loss.item())
+        train_losses.extend(loss_list)
+        all_grad_norms.extend(grad_norms)
 
         file_path = "checkpoints/%s%.2d.pt" % ("checkpoint_", epoch)
         torch.save(model.state_dict(), file_path)
 
         print(f"Epoch n°{epoch} Validation ====", flush=True)
         model.eval()
-        sloss = run_epoch(
+        loss_list, _ = run_epoch(
             (Batch(b[0], b[1], pad_idx) for b in valid_dataloader),
             model,
             SimpleLossCompute(model.generator, criterion),
@@ -733,21 +812,56 @@ from tokenizers.decoders import Metaspace as MetaspaceDecoder`
             None,
             mode="eval",
         )
-        valid_losses.append(sloss.item())
-        print(sloss)    
+        valid_losses.extend(loss_list)
+
+        mean_val = sum(loss_list) / len(loss_list)
+        print(mean_val)    
             
-    plt.figure(figsize=(10, 5))
-    plt.plot(train_losses, label='Training Loss')
-    plt.plot(valid_losses, label='Validation Loss')
+    plot(train_losses, valid_losses, all_grad_norms)`
+  },
+  {
+    type: 'code',
+    content: `def plot(train_losses, valid_losses, all_grad_norms):
+    "Plot the losses and the gradient norm over the training process."
+    num_val_batches = len(valid_losses) // CONFIG["num_epochs"]
+    epoch_mean_valid_losses = []
+    for i in range(CONFIG["num_epochs"]):
+        epoch_data = valid_losses[i*num_val_batches : (i+1)*num_val_batches]
+        mean_val = sum(epoch_data) / len(epoch_data)
+        epoch_mean_valid_losses.extend([mean_val] * len(epoch_data))
+
+    plt.figure(figsize=(10, 10))
+    
+    plt.subplot(2, 1, 1) # subplot 1: loss
+    train_batches_per_epoch = len(train_losses) / CONFIG["num_epochs"]
+    x_train = [i / train_batches_per_epoch for i in range(len(train_losses))]
+    valid_batches_per_epoch = len(valid_losses) / CONFIG["num_epochs"]
+    x_valid = [i / valid_batches_per_epoch for i in range(len(valid_losses))]
+    window_size = max(1, int(train_batches_per_epoch * 0.1))
+    train_loss_rolling = pd.Series(train_losses).rolling(window=window_size, center=True).mean()
+    plt.plot(x_train, train_losses, label='Training Loss')
+    plt.plot(x_train, train_loss_rolling, label='Training Loss (Avg)', color='darkblue', linewidth=2)
+    plt.plot(x_valid, valid_losses, label='Validation Loss', alpha=0.7)
+    plt.plot(x_valid, epoch_mean_valid_losses, label='Val Loss (Avg)', color='darkorange', linewidth=2)
     plt.xlabel('Epochs')
     plt.ylabel('Loss')
     plt.legend()
     plt.title('Training and Validation Loss Over Epochs')
+        
+    plt.subplot(2, 1, 2) # subplot 2: gradient norm
+    plt.plot(all_grad_norms, label='Gradient Norm', color='orange')
+    plt.xlabel('Steps')
+    plt.ylabel('Norm')
+    plt.legend()
+    plt.title('Gradient Norm over Steps')
+
+    plt.tight_layout()
     plt.show()`
   },
   {
     type: 'code',
-    content: `if __name__ == "__main__":
+    content: `# launch the training process
+if __name__ == "__main__":
     print(f"Dataset found at {DATA_PATH} Initializing training...")
     tokenizer_src, tokenizer_tgt = load_tokenizers(data_path=DATA_PATH) 
     train_model(tokenizer_src, tokenizer_tgt)`
@@ -760,7 +874,7 @@ from tokenizers.decoders import Metaspace as MetaspaceDecoder`
     type: 'code',
     content: `def greedy_decode(model, src, src_mask, max_len, start_symbol):
     memory = model.encode(src, src_mask)
-    # Use the batch size from the source
+    # use the batch size from the source
     batch_size = src.size(0)
     ys = torch.zeros(batch_size, 1).fill_(start_symbol).type_as(src.data)
     
@@ -812,14 +926,46 @@ from tokenizers.decoders import Metaspace as MetaspaceDecoder`
   },
   {
     type: 'code',
-    content: `if __name__ == "__main__":
-    tokenizer_src = Tokenizer.from_file("tokenizers/tokenizer_src.json")
-    tokenizer_tgt = Tokenizer.from_file("tokenizers/tokenizer_tgt.json")
-    model = make_model(tokenizer_src.get_vocab_size(), tokenizer_tgt.get_vocab_size(), N=6)
-    checkpoint_path = "checkpoints/checkpoint_05.pt"
-    print(f"Loading {checkpoint_path}...")
+    content: `from torchmetrics.text import BLEUScore
+from tqdm import tqdm
 
-    # Load the saved weights to the model
+def calculate_bleu(model, dataloader, tokenizer_tgt, device=DEVICE):
+    "Compute BLEU score, which measures n-gram overlaps"
+    model.eval()
+    metric = BLEUScore()
+    
+    preds, targets = [], []
+    pad_idx = tokenizer_tgt.token_to_id("<pad>")
+    start_symbol = tokenizer_tgt.token_to_id("<s>")
+    
+    with torch.no_grad():
+        for b in tqdm(dataloader, desc="Computing BLEU"):
+            src = b[0].to(device)  # b[0]: src, b[1]: tgt 
+            src_mask = (src != pad_idx).unsqueeze(-2)
+    
+            model_out = greedy_decode(model, src, src_mask, max_len=72, start_symbol=start_symbol)
+            preds.extend(tokenizer_tgt.decode_batch(model_out.cpu().tolist(), skip_special_tokens=True))     
+            # Decode Ground Truth (b[1])
+            ref_texts = tokenizer_tgt.decode_batch(b[1].tolist(), skip_special_tokens=True)
+            targets.extend([[t] for t in ref_texts])
+
+    score = metric(preds, targets)
+    print(f"BLEU Score: {score.item():.4f}")`
+  },
+  {
+    type: 'code',
+    content: `if __name__ == "__main__":
+    
+    tokenizer_src = Tokenizer.from_file("tokenizers/kaggletokenizer_src.json")
+    tokenizer_tgt = Tokenizer.from_file("tokenizers/kaggletokenizer_tgt.json")
+    model = make_model(tokenizer_src.get_vocab_size(), tokenizer_tgt.get_vocab_size())
+    checkpoint_path = "checkpoints/checkpoint_06.pt"
+    print(f"Loading {checkpoint_path}...")
+    
+    num_params = sum(p.numel() for p in model.parameters())
+    print(f"Number of parameters: {num_params}")
+
+    # load the saved weights to the model
     state_dict = torch.load(checkpoint_path, map_location=torch.device(DEVICE))
     model.load_state_dict(state_dict)
     model.to(DEVICE)
@@ -830,19 +976,73 @@ from tokenizers.decoders import Metaspace as MetaspaceDecoder`
         tokenizer_tgt,
         batch_size=32)
 
-    check_outputs(valid_dataloader, model, tokenizer_src, tokenizer_tgt)`
+    check_outputs(valid_dataloader, model, tokenizer_src, tokenizer_tgt)
+    calculate_bleu(model, valid_dataloader, tokenizer_tgt)`
+  },
+  {
+    type: 'markdown',
+    content: `# Deprecated`
+  },
+  {
+    type: 'code',
+    content: `class LayerNorm(nn.Module):
+    "Offset average and scale by variance the hidden states."
+
+    def __init__(self, feature_amount, eps=1e-6):
+        super().__init__()
+        self.scale = nn.Parameter(torch.ones(feature_amount))
+        self.offset = nn.Parameter(torch.zeros(feature_amount))
+        self.eps = eps  # to not divide by zero
+
+    def forward(self, x):
+        # x: (B, L, S*D)
+        mean = x.mean(-1, keepdim=True)
+        std = x.std(-1, keepdim=True)
+        return self.scale * (x - mean) / (std + self.eps) + self.offset`
+  },
+  {
+    type: 'code',
+    content: `class ResidualConnection(nn.Module):
+    "A residual connection followed by a layer norm."
+
+    def __init__(self, feature_amount, dropout_rate):
+        super().__init__()
+        self.norm = LayerNorm(feature_amount)
+        self.dropout = nn.Dropout(dropout_rate) 
+        # zeros randomly a part of the weights during training (not inference)
+
+    def forward(self, x, sublayer):
+        # x: (B, L, S, D)
+        # sublayer: (B, L, S, d) -> (B, L, S, d)
+        "Apply residual connection to any sublayer with the same size."
+        return x + self.dropout(sublayer(self.norm(x)))`
   }
 ]);
 
 function renderMarkdown(text) {
-  let html = text
+  // 1. Temporarily replace markdown links to avoid double-linking
+  const links = [];
+  let html = text.replace(/\[(.*?)\]\((.*?)\)/gim, (match, label, url) => {
+    links.push({ label, url });
+    return `__MD_LINK_${links.length - 1}__`;
+  });
+
+  // 2. Auto-link raw URLs - use 'link' text
+  html = html.replace(/(https?:\/\/[^\s]+)/gim, '<a href="$1" target="_blank" class="md-link">link</a>');
+  html = html.replace(/__MD_LINK_(\d+)__/gim, (match, id) => {
+    const link = links[parseInt(id)];
+    return `<a href="${link.url}" target="_blank" class="md-link">${link.label}</a>`;
+  });
+
+  // 4. Standard markdown formatting
+  html = html
     .replace(/^# (.*$)/gim, '<h1>$1</h1>')
     .replace(/^## (.*$)/gim, '<h2>$1</h2>')
     .replace(/^### (.*$)/gim, '<h3>$1</h3>')
     .replace(/\*\*(.*?)\*\*/gim, '<strong>$1</strong>')
-    .replace(/\[(.*?)\]\((.*?)\)/gim, '<a href="$2" target="_blank">$1</a>')
     .replace(/\$\$(.*?)\$\$/gim, '<div class="math">$$$1$$</div>') 
     .replace(/\n/gim, '<br />');
+  
   return html;
 }
 

@@ -176,6 +176,12 @@
     color: #ce9178;
 }
 
+.md-link {
+    color: #3794ff;
+    text-decoration: none;
+    border-bottom: none;
+}
+
 .markdown-cell a {
     color: #3794ff;
     text-decoration: none;
