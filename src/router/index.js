@@ -25,6 +25,15 @@ const router = createRouter({
       },
     },
     {
+      path: '/karacter/terms',
+      name: 'karacter-terms',
+      component: () => import('../karacter/TermsView.vue'),
+      meta: {
+        title: 'Karacter Terms',
+        favicon: '/KaracterLogo.png'
+      },
+    },
+    {
       path: '/notebook',
       name: 'notebook',
       component: () => import('../notebook/NotebookView.vue'),

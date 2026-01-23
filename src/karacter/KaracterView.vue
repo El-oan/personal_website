@@ -102,6 +102,7 @@
         <div class="social-links">
           <a href="https://www.instagram.com/karacterapp/" target="_blank">Instagram</a>
           <a href="mailto:character.help@gmail.com">Email</a>
+          <RouterLink to="/karacter/terms">Terms & Conditions</RouterLink>
         </div>
       </div>
     </footer>

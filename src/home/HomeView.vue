@@ -179,7 +179,6 @@
           <a href="https://www.linkedin.com/in/eloantourtelier/" target="_blank" class="link-button"> LinkedIn </a>
           <a href="https://github.com/El-oan" target="_blank" class="link-button"> GitHub </a>
           <a href="https://x.com/eeloannn" target="_blank" class="link-button"> Twitter </a>
-          <a href="https://www.instagram.com/eloan.trtl/" target="_blank" class="link-button"> Instagram </a>
           <a href="/resume.pdf" class="link-button" download> Resume (PDF) </a>
           <a href="https://www.kaggle.com/eloantourtelier" target="_blank" class="link-button"> Kaggle </a>
           <a href="https://apps.apple.com/us/app/%E6%96%87-character/id6747664971" target="_blank" class="link-button">
