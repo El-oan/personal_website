@@ -481,6 +481,11 @@
     max-width: 400px;
     margin: 0 auto;
   }
+
+  .dictionary-image,
+  .ai-image {
+    display: none;
+  }
 }
 
 .cta-group .btn-primary {
