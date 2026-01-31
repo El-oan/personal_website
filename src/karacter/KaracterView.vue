@@ -12,10 +12,10 @@
     <main class="container">
       <section class="hero">
         <img src="/KaracterLogo.png" alt="Karacter App Icon" class="app-icon" />
-        <h1 class="hero-title">Pocket Chinese Offline</h1>
+        <h1 class="hero-title">Karacter - define chinese</h1>
         <p class="hero-subtitle">
-          An essential companion for Chinese learners. Handwriting recognition, HSK levels, 
-          dictionary definitions, stroke order — all without an internet connection        
+          A simple and powerful toolkit for learning and navigating the Chinese language. 
+          The reliable companion that works anywhere in the world.
         </p>
         
         <div class="cta-group">
@@ -40,33 +40,76 @@
               <div class="stat-label">Vectorized Stroke Animations</div>
             </div>
           </div>
-          <div class="stat-card">
+        </div>
+      </section>
 
-            
+      <section class="content-section bento-section">
+        
+        <div class="bento-grid">
+          <!-- Large Card: Offline Dictionary -->
+          <div class="bento-card card-large fade-in-up">
+            <div class="bento-card-content">
+              <h3>100% Offline Dictionary</h3>
+              <p>Requires no internet or VPN, making it the perfect tool for traveling through China or studying without distractions.</p>
+              <div class="bento-card-visual">
+                <img src="/entrycard.png" alt="Karacter Entry Card" class="bento-image dictionary-image" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Small Card: Handwriting -->
+          <div class="bento-card card-small fade-in-up" style="animation-delay: 0.1s;">
+            <div class="bento-card-content">
+              <h3>Handwriting & Search</h3>
+              <p>Instantly find words by drawing them.</p>
+            </div>
+          </div>
+
+          <!-- Small Card: HSK 3.0 -->
+          <div class="bento-card card-small fade-in-up" style="animation-delay: 0.2s;">
+            <div class="bento-card-content">
+              <h3>HSK 3.0</h3>
+              <p>Track your progress with latest standards.</p>
+              <div class="bento-card-visual">
+                <img src="/ancientseal.png" alt="Karacter Ancient Seal" class="bento-image hsk-image" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Large Card: AI Sentence Breakdown -->
+          <div class="bento-card card-large fade-in-up" style="animation-delay: 0.3s;">
+            <div class="bento-card-content">
+              <h3>AI Sentence Breakdown</h3>
+              <p>Deconstructs complex phrases and explains grammar structures, acting as a bridge between a dictionary and a private tutor.</p>
+              <div class="bento-card-visual">
+                <img src="/entrylist.png" alt="Karacter Entry List" class="bento-image ai-image" />
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      <section class="content-section">
+      <section class="content-section fade-in">
         <div class="feature-block">
           <div class="feature-text">
             <h2>What is Karacter?</h2>
             <p>
-              Karacter is built to be <strong>fast</strong>, <strong>clean</strong>, and <strong>fully offline</strong>. 
-              Only the AI-sentences breakdown requires an internet connection.
-              Search Chinese words, pinyin, or English — anytime, anywhere, without a VPN or internet connection.
-              Karacter is <strong>free</strong> and will remain free.
+              Karacter is a simple and powerful toolkit for learning and navigating the Chinese language. 
+              It is designed for students, travelers, and enthusiasts who need a reliable companion 
+              that works anywhere in the world.
             </p>
+
             <p>
-              If you don’t know a character, you can <strong>hand-draw</strong> it to find it instantly. You can also
-              listen to pronunciations, save vocabulary for later, and see the proper <strong> stroke order</strong>.
+              - A 100% offline official dictionary that requires no internet or VPN, making it the perfect tool for traveling through China or studying without distractions. <br>
+              - Advanced handwriting and search where you can instantly find words by drawing them, or searching via Pinyin, English, and Chinese characters. <br>
+              - AI-powered sentence breakdown that deconstructs complex phrases and explains grammar structures, acting as a bridge between a dictionary and a private tutor. <br>
             </p>
+
             <p>
-              For longer sentences, Karacter includes <strong>AI features</strong> that break down complex structures
-              into understandable blocks. Vocabulary is labeled using the latest official <strong>HSK 3.0</strong> convention.
+              Karacter is a great alternative to Pleco, Hanping, and HelloChinese for those seeking 
+              a fast, modern, and offline-first experience!
             </p>
           </div>
-
         </div>
       </section>
 
@@ -93,7 +136,6 @@
         </div>
       </section>
 
-      
     </main>
 
     <footer class="footer">
