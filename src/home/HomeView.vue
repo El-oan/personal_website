@@ -1,29 +1,43 @@
 <template>
-  <div class="home-wrapper">
+  <div class="home-wrapper" :class="{ 'nav-open': isNavOpen }">
     <canvas 
       ref="bgCanvas" 
       class="bg-canvas"
       style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0;"
     ></canvas>
-    <nav class="sidebar" aria-label="Section navigation">
+    <nav
+      class="sidebar"
+      :class="{ 'is-open': isNavOpen }"
+      aria-label="Section navigation"
+      @mouseenter="openNav"
+      @mouseleave="closeNav"
+      @focusin="openNav"
+      @focusout="handleNavFocusOut"
+    >
       <div class="side-inner">
-        <div class="side-group">
-          <a class="side-link" href="#about">About</a>
-        </div>
-
-        <div class="side-group">
-          <div class="side-label">Work</div>
-          <a class="side-link" href="#projects">Projects</a>
-          <a class="side-link" href="#experiences">Experiences</a>
-          <a class="side-link" href="#education">Education</a>
-        </div>
-
-        <div class="side-group">
-          <div class="side-label">Contact</div>
-          <a class="side-link" href="#connect">Reach Out</a>
-        </div>
+        <a class="side-item" href="#about">
+          <span class="side-bar" aria-hidden="true"></span>
+          <span class="side-text">About</span>
+        </a>
+        <a class="side-item" href="#projects">
+          <span class="side-bar" aria-hidden="true"></span>
+          <span class="side-text">Projects</span>
+        </a>
+        <a class="side-item" href="#experiences">
+          <span class="side-bar" aria-hidden="true"></span>
+          <span class="side-text">Experiences</span>
+        </a>
+        <a class="side-item" href="#education">
+          <span class="side-bar" aria-hidden="true"></span>
+          <span class="side-text">Education</span>
+        </a>
+        <a class="side-item" href="#connect">
+          <span class="side-bar" aria-hidden="true"></span>
+          <span class="side-text">Reach Out</span>
+        </a>
       </div>
     </nav>
+    <div class="blur-scrim" aria-hidden="true"></div>
 
     <div class="home-container">
       <h1 class="page-title">Eloan Tourtelier</h1>
@@ -199,6 +213,22 @@ import { ref, onBeforeUnmount, onMounted } from 'vue';
 let cleanup;
 
 const bgCanvas = ref(null);
+const isNavOpen = ref(false);
+
+function openNav() {
+  isNavOpen.value = true;
+}
+
+function closeNav() {
+  isNavOpen.value = false;
+}
+
+function handleNavFocusOut(event) {
+  const nextTarget = event.relatedTarget;
+  if (!(nextTarget instanceof Node) || !event.currentTarget.contains(nextTarget)) {
+    closeNav();
+  }
+}
 
 onMounted(() => {
   document.body.style.backgroundColor = '#121212';
@@ -249,7 +279,7 @@ onMounted(() => {
         // Binary threshold: sudden appearance
         if (norm > 0.60) {
           ctx.fillStyle = `rgba(84, 104, 255, 0.4)`; // Blue
-          ctx.fillRect(px, py, 2.5, 2.5);
+          ctx.fillRect(px, py, 2.9, 2.9);
         }
 
         // Secondary Grid Point (Independent)
@@ -283,7 +313,7 @@ onMounted(() => {
     cancelAnimationFrame(animationFrame);
   };
 
-  const links = Array.from(document.querySelectorAll('.side-link'));
+  const links = Array.from(document.querySelectorAll('.side-item'));
   const ids = links.map((a) => a.getAttribute('href')).filter((h) => h && h.startsWith('#'));
 
   const sections = ids.map((id) => document.querySelector(id)).filter(Boolean);
@@ -333,5 +363,4 @@ onBeforeUnmount(() => {
   if (cleanup) cleanup();
 });
 </script>
-
 
