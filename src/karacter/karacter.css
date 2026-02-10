@@ -99,6 +99,61 @@
   color: var(--color-primary);
 }
 
+/* Floating QR Card */
+.qr-float-card {
+  position: fixed;
+  bottom: 22px;
+  right: 22px;
+  background: white;
+  padding: 13px;
+  border-radius: 10px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 11px;
+  z-index: 100;
+  border: 1px solid var(--color-border);
+  width: 144px;
+}
+
+
+
+.qr-link-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+  z-index: 10;
+  cursor: pointer;
+}
+
+.qr-code-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 12px;
+}
+
+.qr-content {
+  width: 100%;
+}
+
+.qr-store-badge-img {
+  width: 126px;
+  height: auto;
+  display: block;
+}
+
+.qr-footer-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
 /* Hero */
 .hero {
   text-align: center;
@@ -160,7 +215,7 @@
 }
 
 .btn-primary {
-  background-color: #0f172a;
+  background-color: black;
   color: white;
   box-shadow: 0 4px 6px rgba(15, 23, 42, 0.1);
   position: relative;
@@ -441,6 +496,10 @@
 
 /* Responsive */
 @media (max-width: 768px) {
+  .qr-float-card {
+    display: none;
+  }
+
   .bento-grid {
     grid-template-columns: 1fr;
   }

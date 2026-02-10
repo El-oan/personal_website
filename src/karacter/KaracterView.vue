@@ -148,6 +148,15 @@
         </div>
       </div>
     </footer>
+    <div class="qr-float-card">
+      <img src="/QRCode.png" alt="Download on App Store" class="qr-code-img" />
+      <div class="qr-content">
+        <div class="qr-footer-row">
+            <img src="/appstore.png" alt="Available on App Store" class="qr-store-badge-img" />
+        </div>
+      </div>
+      <a href="https://apps.apple.com/us/app/%E6%96%87-character/id6747664971?l=zh-Hans-CN" target="_blank" class="qr-link-overlay"></a>
+    </div>
   </div>
 </template>
 
