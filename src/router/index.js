@@ -43,6 +43,15 @@ const router = createRouter({
       },
     },
     {
+      path: '/focustrain',
+      name: 'focustrain',
+      component: () => import('../focustrain/TermsView.vue'),
+      meta: {
+        title: 'Focus Train',
+        favicon: '/focustrainicon.png'
+      },
+    },
+    {
       path: '/:pathMatch(.*)*',
       redirect: '/',
     },

@@ -203,6 +203,13 @@
           </a>
         </div>
       </div>
+
+      <div class="footer">
+        <p>
+          Favicon designed by <a href="https://readymag.website/u1139024403/5218555/?utm_source=ig&utm_medium=social&utm_content=link_in_bio&fbclid=PAZXh0bgNhZW0CMTEAc3J0YwZhcHBfaWQMMjU2MjgxMDQwNTU4AAGn_c3mcIRik0vZ08Jpc-bp6XNRk47TOwt_ZzAqnGqCemrG5qnD6XUge_j3lsc_aem__m7zC50WEINizWnxMA-ShA" target="_blank" rel="noopener noreferrer">my sister</a>
+        </p>
+        <img src="/favicon.jpeg" alt="Favicon" class="footer-icon" />
+      </div>
     </div>
   </div>
 </template>
