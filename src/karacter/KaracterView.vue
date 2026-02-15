@@ -11,7 +11,7 @@
 
     <main class="container">
       <section class="hero">
-        <img src="/KaracterLogo.png" alt="Karacter App Icon" class="app-icon" />
+        <img src="/karacter/KaracterLogo.png" alt="Karacter App Icon" class="app-icon" />
         <h1 class="hero-title">Karacter - define chinese</h1>
         <p class="hero-subtitle">
           A simple and powerful toolkit for learning and navigating the Chinese language. 
@@ -52,7 +52,7 @@
               <h3>100% Offline Dictionary</h3>
               <p>Requires no internet or VPN, making it the perfect tool for traveling through China or studying without distractions.</p>
               <div class="bento-card-visual">
-                <img src="/entrycard.png" alt="Karacter Entry Card" class="bento-image dictionary-image" />
+                <img src="/karacter/entrycard.png" alt="Karacter Entry Card" class="bento-image dictionary-image" />
               </div>
             </div>
           </div>
@@ -71,7 +71,7 @@
               <h3>HSK 3.0</h3>
               <p>Track your progress with latest standards.</p>
               <div class="bento-card-visual">
-                <img src="/ancientseal.png" alt="Karacter Ancient Seal" class="bento-image hsk-image" />
+                <img src="/karacter/ancientseal.png" alt="Karacter Ancient Seal" class="bento-image hsk-image" />
               </div>
             </div>
           </div>
@@ -82,7 +82,7 @@
               <h3>AI Sentence Breakdown</h3>
               <p>Deconstructs complex phrases and explains grammar structures, acting as a bridge between a dictionary and a private tutor.</p>
               <div class="bento-card-visual">
-                <img src="/entrylist.png" alt="Karacter Entry List" class="bento-image ai-image" />
+                <img src="/karacter/entrylist.png" alt="Karacter Entry List" class="bento-image ai-image" />
               </div>
             </div>
           </div>
@@ -130,7 +130,7 @@
             </p>
           </div>
           <div class="feature-image-wrapper">
-            <img src="/OldLogo.png" alt="Original Karacter Logo" class="feature-image" />
+            <img src="/karacter/OldLogo.png" alt="Original Karacter Logo" class="feature-image" />
             <span class="image-caption">The first logo design. But it looked too similar to Alipay. I made it with Illustrator.</span>
           </div>
         </div>
@@ -149,10 +149,10 @@
       </div>
     </footer>
     <div class="qr-float-card">
-      <img src="/QRCode.png" alt="Download on App Store" class="qr-code-img" />
+      <img src="/karacter/QRCode.png" alt="Download on App Store" class="qr-code-img" />
       <div class="qr-content">
         <div class="qr-footer-row">
-            <img src="/appstore.png" alt="Available on App Store" class="qr-store-badge-img" />
+            <img src="/karacter/appstore.png" alt="Available on App Store" class="qr-store-badge-img" />
         </div>
       </div>
       <a href="https://apps.apple.com/us/app/%E6%96%87-character/id6747664971?l=zh-Hans-CN" target="_blank" class="qr-link-overlay"></a>

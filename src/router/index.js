@@ -11,7 +11,7 @@ const router = createRouter({
       component: HomeView,
       meta: {
         title: 'Portfolio',
-        favicon: '/favicon.jpeg'
+        favicon: '/homepage/favicon.jpeg'
       },
     },
     {
@@ -21,7 +21,7 @@ const router = createRouter({
       alias: ['/karacter/'],
       meta: {
         title: 'Karacter',
-        favicon: '/KaracterLogo.png'
+        favicon: '/karacter/KaracterLogo.png'
       },
     },
     {
@@ -30,7 +30,7 @@ const router = createRouter({
       component: () => import('../karacter/TermsView.vue'),
       meta: {
         title: 'Karacter Terms',
-        favicon: '/KaracterLogo.png'
+        favicon: '/karacter/KaracterLogo.png'
       },
     },
     {
@@ -39,7 +39,7 @@ const router = createRouter({
       component: () => import('../notebook/NotebookView.vue'),
       meta: {
         title: 'Notebook',
-        favicon: '/favicon.jpeg'
+        favicon: '/homepage/favicon.jpeg'
       },
     },
     {
@@ -48,7 +48,7 @@ const router = createRouter({
       component: () => import('../focustrain/TermsView.vue'),
       meta: {
         title: 'Focus Train',
-        favicon: '/focustrainicon.png'
+        favicon: '/focustrain/focustrainicon.png'
       },
     },
     {
@@ -72,7 +72,7 @@ router.afterEach((to) => {
 
   const link = document.querySelector("link[rel~='icon']");
   if (link) {
-    link.href = to.meta.favicon || '/favicon.png';
+    link.href = to.meta.favicon || '/homepage/favicon.jpeg';
   }
 });
 

@@ -3,15 +3,16 @@
     <nav class="navbar">
       <div class="container nav-content">
         <div class="brand">
-          <span class="nav-title">🎯 Focus Train</span>
+
+          <span class="nav-title">Focus Train</span>
         </div>
         <RouterLink to="/" class="back-link">← back to home</RouterLink>
       </div>
     </nav>
 
     <main class="container">
-      <section class="hero" style="text-align: center; max-width: 800px; padding-bottom: 40px;">
-        <img src="/focustrainicon.png" alt="Focus Train App Icon" class="app-icon" />
+      <section class="hero" style="text-align: left; max-width: 800px; padding-bottom: 40px;">
+        <img src="/focustrain/focustrainicon.png" alt="Focus Train" class="app-icon" style="margin-bottom: 24px;" />
         <h1 class="hero-title" style="font-size: 2.5rem; margin-bottom: 40px;">Terms and Conditions</h1>
         
         <div class="terms-content">
@@ -176,5 +177,11 @@
 
 .terms-content li {
   margin-bottom: 8px;
+}
+
+.nav-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
 }
 </style>

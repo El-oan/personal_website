@@ -69,7 +69,7 @@
 
         <div class="card">
           <img
-            src="/KaracterLogo.png"
+            src="/karacter/KaracterLogo.png"
             alt="Karacter logo"
             class="card-logo"
           />
@@ -193,7 +193,7 @@
           <a href="https://www.linkedin.com/in/eloantourtelier/" target="_blank" class="link-button"> LinkedIn </a>
           <a href="https://github.com/El-oan" target="_blank" class="link-button"> GitHub </a>
           <a href="https://x.com/eeloannn" target="_blank" class="link-button"> Twitter </a>
-          <a href="/resume.pdf" class="link-button" download> Resume (PDF) </a>
+          <a href="/homepage/resume.pdf" class="link-button" download> Resume (PDF) </a>
           <a href="https://www.kaggle.com/eloantourtelier" target="_blank" class="link-button"> Kaggle </a>
           <a href="https://apps.apple.com/us/app/%E6%96%87-character/id6747664971" target="_blank" class="link-button">
             Download Karacter
@@ -208,7 +208,7 @@
         <p>
           Favicon designed by <a href="https://readymag.website/u1139024403/5218555/?utm_source=ig&utm_medium=social&utm_content=link_in_bio&fbclid=PAZXh0bgNhZW0CMTEAc3J0YwZhcHBfaWQMMjU2MjgxMDQwNTU4AAGn_c3mcIRik0vZ08Jpc-bp6XNRk47TOwt_ZzAqnGqCemrG5qnD6XUge_j3lsc_aem__m7zC50WEINizWnxMA-ShA" target="_blank" rel="noopener noreferrer">my sister</a>
         </p>
-        <img src="/favicon.jpeg" alt="Favicon" class="footer-icon" />
+        <img src="/homepage/favicon.jpeg" alt="Favicon" class="footer-icon" />
       </div>
     </div>
   </div>
