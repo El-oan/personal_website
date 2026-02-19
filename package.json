@@ -10,6 +10,7 @@
     "deploy": "vite build && gh-pages -d dist"
   },
   "dependencies": {
+    "posthog-js": "^1.351.3",
     "vue": "^3.5.0",
     "vue-router": "^4.6.4"
   },

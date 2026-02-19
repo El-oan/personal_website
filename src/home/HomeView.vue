@@ -3,7 +3,6 @@
     <canvas 
       ref="bgCanvas" 
       class="bg-canvas"
-      style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0;"
     ></canvas>
     <nav
       class="sidebar"
@@ -51,14 +50,14 @@
         </p>
         <p>
           I love design, languages and coffee shops. 
-          I speak English and French, and I'm learning Chinese (Russian too but
-          if I start a russian sentence I end up speaking chinese). 
+          I speak English and French, and I'm learning Chinese (Russian too, but
+  if I start a Russian sentence I end up speaking Chinese). 
           I recently discovered I really enjoy machine learning too.
         </p>
         <p>
           I spent most of my life in the west of France, and 6 months in China. 
           I'd love to try the USA, and travel around the world (yep overdone ik).
-          Do not hesitate one second to reach out!
+          Don't hesitate to reach out!
         </p>
       </div>
 
@@ -78,7 +77,7 @@
           <div class="card-desc">
             An offline Chinese learning helper with character drawing recognition, HSK 3.0 labeling, AI-powered sentence
             analysis. You can search for any Chinese word, expression, pinyin, English term — or hand-draw any character
-            you want to learn more about. Pronunciations are available, as well as the correct strokes order. No internet
+            you want to learn more about. Pronunciations are available, as well as the correct stroke order. No internet
             connection nor VPN required.
           </div>
           <div class="tags-row">
@@ -116,7 +115,7 @@
         <div class="card-title">Mistral Hackathon</div>
         <div class="card-meta">Weekend Competition • September 2025 • 1500+ LOC</div>
         <div class="card-desc">
-          Competed in a Mistral AI hackathon. Discovered and developed Model Context
+          Competed in a Mistral AI hackathon. Explored and developed Model Context
           Protocol (MCP) connectors enabling LLMs to call external tools and pipelines. Built a demo using Spotify,
           Genius, and Wikipedia APIs to add music tooling to "Le Chat" AI model.
         </div>
@@ -139,19 +138,19 @@
         <div class="card">
           <div class="card-title">Data Internship</div>
           <div class="card-meta">Forvis Mazars • Paris • sep 2025 - feb 2026</div>
-          <div class="card-desc">Worked as a data Analyst/Engineer/Devops.</div>
+          <div class="card-desc">Worked as a Data Analyst/Engineer + Full-Stack dev.</div>
         </div>
 
         <div class="card">
           <div class="card-title">Communication lead, Mountain Club</div>
           <div class="card-meta">CentraleSupélec • 2024 - 2025</div>
-          <div class="card-desc">Managed the club's communication and image.</div>
+          <div class="card-desc">Managed the club's communication and image. Designed assets and communication mediums.</div>
         </div>
 
         <div class="card">
           <div class="card-title">Sponsorship lead, Bouldering Club</div>
           <div class="card-meta">CentraleSupélec • 2024 - 2025</div>
-          <div class="card-desc">Approached companies to establish partnerships.</div>
+          <div class="card-desc">Approached companies to establish partnerships. Raised funds and secured equipment for competition prizes.</div>
         </div>
       </div>
 
@@ -165,7 +164,7 @@
           <div class="card-meta">2023 - 2027 • Paris-Saclay</div>
           <div class="card-desc">
             MEng at CentraleSupélec, 1st European Engineering School (Shanghai ranking). Ranked 100th/6000+ in national
-            entrance exam. Advanced Mathematics, Machine Learning, Time Series Econometrics, Quantum physics, etc. I hate this school.
+            entrance exam. Advanced Mathematics, Machine Learning, Time Series Econometrics, Quantum Physics, etc. I hate this school.
           </div>
         </div>
 
@@ -190,17 +189,15 @@
         <h2>Connect</h2>
         <p>Feel free to reach out :)</p>
         <div class="links">
-          <a href="https://www.linkedin.com/in/eloantourtelier/" target="_blank" class="link-button"> LinkedIn </a>
-          <a href="https://github.com/El-oan" target="_blank" class="link-button"> GitHub </a>
-          <a href="https://x.com/eeloannn" target="_blank" class="link-button"> Twitter </a>
-          <a href="/homepage/resume.pdf" class="link-button" download> Resume (PDF) </a>
-          <a href="https://www.kaggle.com/eloantourtelier" target="_blank" class="link-button"> Kaggle </a>
-          <a href="https://apps.apple.com/us/app/%E6%96%87-character/id6747664971" target="_blank" class="link-button">
+          <a href="https://www.linkedin.com/in/eloantourtelier/" target="_blank" class="link-button" @click="trackConnect('LinkedIn')"> LinkedIn </a>
+          <a href="https://github.com/El-oan" target="_blank" class="link-button" @click="trackConnect('GitHub')"> GitHub </a>
+          <a href="https://x.com/eeloannn" target="_blank" class="link-button" @click="trackConnect('Twitter')"> Twitter </a>
+          <a href="/homepage/resume.pdf" class="link-button" download @click="trackConnect('Resume')"> Resume (PDF) </a>
+          <a href="https://www.kaggle.com/eloantourtelier" target="_blank" class="link-button" @click="trackConnect('Kaggle')"> Kaggle </a>
+          <a href="https://apps.apple.com/us/app/%E6%96%87-character/id6747664971" target="_blank" class="link-button" @click="trackConnect('Karacter Download')">
             Download Karacter
           </a>
-          <a href="https://sites.google.com/view/characteres/accueil" target="_blank" class="link-button">
-            Karacter Website
-          </a>
+
         </div>
       </div>
 
@@ -216,6 +213,11 @@
 
 <script setup>
 import { ref, onBeforeUnmount, onMounted } from 'vue';
+import posthog from 'posthog-js';
+
+const trackConnect = (platform) => {
+  posthog.capture('connect_click', { platform });
+};
 
 let cleanup;
 
@@ -330,6 +332,17 @@ onMounted(() => {
   }
 
   const pickActive = () => {
+    // If we're at the bottom of the page, forcefully select the last section
+    if ((window.innerHeight + Math.round(window.scrollY)) >= document.documentElement.scrollHeight) {
+      if (sections.length > 0) {
+        const last = sections[sections.length - 1];
+        if (last?.id) {
+          activate(`#${last.id}`);
+          return;
+        }
+      }
+    }
+
     const y = 120; 
     let best = sections[0];
     for (const s of sections) {
