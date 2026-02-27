@@ -14,8 +14,8 @@
         <img src="/karacter/KaracterLogo.png" alt="Karacter App Icon" class="app-icon" />
         <h1 class="hero-title">Karacter - define chinese</h1>
         <p class="hero-subtitle">
-          A simple and powerful toolkit for learning and navigating the Chinese language. 
-          The reliable companion that works anywhere in the world.
+          A beautiful and powerful toolkit for learning and navigating the Chinese language. 
+          A reliable companion that works anywhere in the world.
         </p>
         
         <div class="cta-group">
@@ -31,13 +31,19 @@
           <div class="stat-card">
             <div class="stat-content">
               <div class="stat-value counter" data-target="178">0</div>
-              <div class="stat-label">High Quality Definitions</div>
+              <div class="stat-label">high quality definitions</div>
             </div>
           </div>
           <div class="stat-card">
             <div class="stat-content">
               <div class="stat-value counter" data-target="9500">0</div>
-              <div class="stat-label">Vectorized Stroke Animations</div>
+              <div class="stat-label">vectorized stroke animations</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-content">
+              <div class="stat-value counter" data-target="7200">0</div>
+              <div class="stat-label">example sentences</div>
             </div>
           </div>
         </div>
@@ -46,27 +52,29 @@
       <section class="content-section bento-section">
         
         <div class="bento-grid">
-          <!-- Large Card: Offline Dictionary -->
-          <div class="bento-card card-large fade-in-up">
+          <!-- Wide Card: Offline Dictionary -->
+          <div class="bento-card card-wide card-offline card-text-only fade-in-up">
             <div class="bento-card-content">
               <h3>100% Offline Dictionary</h3>
               <p>Requires no internet or VPN, making it the perfect tool for traveling through China or studying without distractions.</p>
-              <div class="bento-card-visual">
-                <img src="/karacter/entrycard.png" alt="Karacter Entry Card" class="bento-image dictionary-image" />
-              </div>
             </div>
           </div>
 
-          <!-- Small Card: Handwriting -->
-          <div class="bento-card card-small fade-in-up" style="animation-delay: 0.1s;">
+          <!-- Portrait Card: Entry Card -->
+          <div class="bento-card card-portrait entrycard-bento image-only-card fade-in-up" style="animation-delay: 0.05s;">
+            <img src="/karacter/entrycard.png" alt="Karacter Entry Card" class="bento-image entrycard-image" />
+          </div>
+
+          <!-- Compact Card: Handwriting -->
+          <div class="bento-card card-compact fade-in-up" style="animation-delay: 0.1s;">
             <div class="bento-card-content">
               <h3>Handwriting & Search</h3>
               <p>Instantly find words by drawing them.</p>
             </div>
           </div>
 
-          <!-- Small Card: HSK 3.0 -->
-          <div class="bento-card card-small fade-in-up" style="animation-delay: 0.2s;">
+          <!-- Compact Card: HSK 3.0 -->
+          <div class="bento-card card-compact fade-in-up" style="animation-delay: 0.15s;">
             <div class="bento-card-content">
               <h3>HSK 3.0</h3>
               <p>Track your progress with latest standards.</p>
@@ -76,14 +84,30 @@
             </div>
           </div>
 
-          <!-- Large Card: AI Sentence Breakdown -->
-          <div class="bento-card card-large fade-in-up" style="animation-delay: 0.3s;">
+          <!-- Wide Card: AI Sentence Breakdown -->
+          <div class="bento-card card-wide card-ai fade-in-up" style="animation-delay: 0.2s;">
             <div class="bento-card-content">
               <h3>AI Sentence Breakdown</h3>
               <p>Deconstructs complex phrases and explains grammar structures, acting as a bridge between a dictionary and a private tutor.</p>
               <div class="bento-card-visual">
                 <img src="/karacter/entrylist.png" alt="Karacter Entry List" class="bento-image ai-image" />
               </div>
+            </div>
+          </div>
+
+          <!-- Banner Card: Widget Image -->
+          <div class="bento-card card-banner widget-bento image-only-card fade-in-up" style="animation-delay: 0.3s;">
+             <img src="/karacter/widget.jpg" alt="Karacter Widget" class="bento-image widget-image" />
+          </div>
+
+          <!-- Tall Card: Lock Screen Words -->
+          <div class="bento-card card-tall lockscreen-bento card-stacked fade-in-up" style="animation-delay: 0.35s;">
+            <div class="bento-card-content">
+              <h3>Lock Screen Words</h3>
+              <p>Add words to your lockscreen to review them every time you open your phone.</p>
+            </div>
+            <div class="bento-card-image-bottom">
+              <img src="/karacter/lockscreen.jpg" alt="Karacter Lockscreen Words" class="bento-image lockscreen-image" />
             </div>
           </div>
         </div>
@@ -94,19 +118,20 @@
           <div class="feature-text">
             <h2>What is Karacter?</h2>
             <p>
-              Karacter is a simple and powerful toolkit for learning and navigating the Chinese language. 
+              Karacter is a minimalistic and powerful toolkit for learning and navigating the Chinese language. 
               It is designed for students, travelers, and enthusiasts who need a reliable companion 
-              that works anywhere in the world.
+              that works offline, anywhere in the world.
             </p>
 
             <p>
-              - A 100% offline official dictionary that requires no internet or VPN, making it the perfect tool for traveling through China or studying without distractions. <br>
-              - Advanced handwriting and search where you can instantly find words by drawing them, or searching via Pinyin, English, and Chinese characters. <br>
-              - AI-powered sentence breakdown that deconstructs complex phrases and explains grammar structures, acting as a bridge between a dictionary and a private tutor. <br>
+              1. A high quality dictionary, requiring no internet nor VPN, making it the perfect tool for traveling through China or studying without distractions. <br>
+              2. Advanced handwriting and search where you can instantly find words by drawing them, searching via pinyin, English, or Chinese. <br>
+              3. Homescreen and lockscreen widgets, displaying your words to see them throughout the day. <br>
+              4. AI-powered explanations, deconstructing complex phrases and explaining grammar structures, usages and historical facts. <br>
             </p>
 
             <p>
-              Karacter is a great alternative to Pleco, Hanping, and HelloChinese for those seeking 
+              Karacter is a great alternative to Pleco for those seeking 
               a fast, modern, and offline-first experience!
             </p>
           </div>
@@ -126,7 +151,7 @@
             <p>
               This project was mainly meant to help me learn Chinese and to feel that I could actually
               build something and exercise free will, rather than experience the soul-crushing 
-              process of being a rat employee.
+              process of being an obedient cog in the wheel.
             </p>
           </div>
           <div class="feature-image-wrapper">
@@ -208,6 +233,7 @@ function animateCounter(el) {
       // Final formatting
       if (target === 178) el.innerText = '178k+';
       else if (target === 9500) el.innerText = '9500+';
+      else if (target === 7200) el.innerText = '7200+';
       else el.innerText = target;
       
       clearInterval(timer);
@@ -215,6 +241,7 @@ function animateCounter(el) {
       // Intermediate formatting
       if (target === 178) el.innerText = current + 'k+';
       else if (target === 9500) el.innerText = current + '+';
+      else if (target === 7200) el.innerText = current + '+';
       else el.innerText = current;
     }
   }, 1000 / fps);

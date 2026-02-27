@@ -264,10 +264,10 @@
 }
 
 .stats-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  max-width: 900px;
-  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  gap: 90px;
+  width: 100%;
 }
 
 .stat-card {
@@ -280,11 +280,8 @@
   text-align: center;
   transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   position: relative;
-  overflow: hidden;
+  border-radius: var(--radius-md);
 }
-
-
-
 
 .stat-value {
   font-size: 2.25rem;
@@ -304,15 +301,27 @@
   color: var(--color-text-light);
   line-height: 1.4;
   font-weight: 400;
+  white-space: nowrap;
 }
 
 .content-section {
   padding: 100px 0;
-  border-top: 1px solid var(--color-border);
+  position: relative;
 }
 
-.bento-section {
-  border-top: none;
+.content-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 500px;
+  height: 1px;
+  background-color: var(--color-border);
+}
+
+.bento-section::before {
+  display: none;
 }
 
 .alternate-bg {
@@ -333,6 +342,8 @@
 .bento-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
+  grid-auto-rows: 20px;
+  grid-auto-flow: dense;
   gap: 20px;
 }
 
@@ -348,12 +359,42 @@
   flex-direction: column;
 }
 
-.card-large {
+.card-wide {
   grid-column: span 2;
+  grid-row: span 8;
 }
 
-.card-small {
+.card-offline {
+  grid-row: span 5;
+}
+
+.card-ai {
+  min-height: 280px;
+}
+
+.card-compact {
   grid-column: span 1;
+  grid-row: span 5;
+  padding: 24px;
+}
+
+.card-portrait {
+  grid-column: span 1;
+  grid-row: span 11;
+}
+
+.card-banner {
+  grid-column: span 2;
+  grid-row: span 10;
+}
+
+.card-tall {
+  grid-column: span 1;
+  grid-row: span 15;
+}
+
+.card-text-only .bento-card-content {
+  max-width: 85%;
 }
 
 .bento-card h3 {
@@ -372,9 +413,24 @@
   z-index: 2;
 }
 
-.card-large:has(.ai-image) p,
-.card-small:has(.hsk-image) p {
+.card-ai p,
+.card-compact:has(.hsk-image) p {
   max-width: 65%;
+}
+
+.card-stacked p {
+  max-width: 100% !important;
+}
+
+.bento-card-image-bottom {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  flex: 1;
+  width: calc(100% + 64px);
+  /* Negate padding (32px * 2) */
+  margin: 24px -32px -32px -32px;
+  overflow: hidden;
 }
 
 .bento-card-visual {
@@ -394,13 +450,8 @@
   filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.05));
 }
 
-.dictionary-image {
-  height: 190px;
-  transform: translateY(10px) translateX(10px);
-}
-
 .ai-image {
-  height: 110px;
+  height: 130px;
   transform: translateY(-30px) translateX(30px);
 }
 
@@ -408,6 +459,53 @@
   height: 90px;
   transform: translateY(-30px) translateX(-10px);
   filter: none;
+}
+
+.lockscreen-image {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  box-shadow: var(--shadow-md);
+  transform: translateY(0);
+}
+
+.image-only-card {
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.entrycard-bento {
+  aspect-ratio: 1037 / 1545;
+  align-self: start;
+}
+
+.entrycard-image {
+  width: auto;
+  max-width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: none;
+}
+
+.widget-bento {
+  aspect-ratio: 1025 / 485;
+  align-self: start;
+  border-radius: 48px;
+}
+
+.widget-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transform: none;
+  filter: none;
+}
+
+.lockscreen-bento {
+  min-height: 504px;
 }
 
 .bento-title {
@@ -473,8 +571,19 @@
 /* Footer */
 .footer {
   padding: 40px 0;
-  border-top: 1px solid var(--color-border);
   margin-top: 40px;
+  position: relative;
+}
+
+.footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 800px;
+  height: 1px;
+  background-color: var(--color-border);
 }
 
 .footer-content {
@@ -502,11 +611,21 @@
 
   .bento-grid {
     grid-template-columns: 1fr;
+    grid-auto-rows: auto;
   }
 
-  .card-large,
-  .card-small {
+  .card-wide,
+  .card-compact,
+  .card-portrait,
+  .card-banner,
+  .card-tall {
     grid-column: span 1;
+    grid-row: span 1;
+  }
+
+  .entrycard-bento,
+  .lockscreen-bento {
+    min-height: auto;
   }
 
   .bento-card p {
@@ -539,11 +658,6 @@
     grid-template-columns: 1fr;
     max-width: 400px;
     margin: 0 auto;
-  }
-
-  .dictionary-image,
-  .ai-image {
-    display: none;
   }
 }
 
