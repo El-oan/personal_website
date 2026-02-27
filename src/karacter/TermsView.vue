@@ -65,9 +65,73 @@
           <p>
              The Application is provided to you "AS IS" and "AS AVAILABLE" and with all faults and defects without warranty of any kind. To the maximum extent permitted under applicable law, we expressly disclaim all warranties, whether express, implied, statutory, or otherwise.
           </p>
-          
+
+          <h2>9. Subscription Terms and Licensed Application End User License Agreement</h2>
+          <p>
+            Karacter offers auto-renewable subscriptions for access to premium features. 
+            The App is licensed, not sold, to you. Your license to the App is subject to your prior 
+            acceptance of this End User License Agreement ("Agreement"). Your license to the App 
+            under this Agreement is granted by Karacter ("Licensor"). Licensor reserves all rights 
+            in and to the App not expressly granted to you under this Agreement.
+          </p>
+
+          <h3>a. Auto-Renewable Subscriptions</h3>
+          <ul>
+            <li><strong>Payment charging:</strong> Payment will be charged to your Apple ID account at confirmation of purchase.</li>
+            <li><strong>Auto-renewal rules:</strong> The subscription automatically renews unless it is canceled at least 24 hours before the end of the current period.</li>
+            <li><strong>Renewal billing:</strong> Your account will be charged for renewal within 24 hours prior to the end of the current period.</li>
+            <li><strong>Management & Cancellation:</strong> You can manage and cancel your subscriptions by going to your App Store account settings after purchase.</li>
+          </ul>
+
+          <h3>b. Scope of License:</h3> 
+          <p>
+            Licensor grants to you a nontransferable license to use the Licensed Application on any Apple-branded 
+            products that you own or control and as permitted by the Usage Rules. The terms of this Agreement will 
+            govern any content, materials, or services accessible from or purchased within the Licensed Application 
+            as well as upgrades provided by Licensor that replace or supplement the original Licensed Application. 
+            Except as provided in the Usage Rules, you may not distribute or make the Licensed Application available 
+            over a network where it could be used by multiple devices at the same time. You may not transfer, redistribute 
+            or sublicense the Licensed Application. You may not copy (except as permitted by this license and the Usage Rules), 
+            reverse-engineer, disassemble, attempt to derive the source code of, modify, or create derivative works of the 
+            Licensed Application, any updates, or any part thereof.
+          </p>
+
+          <h3>c. Consent to Use of Data:</h3> 
+          <p>
+            You agree that Licensor may collect and use technical data and related information—including but not limited 
+            to technical information about your device, system and application software, and peripherals—that is gathered 
+            periodically to facilitate the provision of software updates, product support, and other services to you (if any) 
+            related to the Licensed Application. Licensor may use this information, as long as it is in a form that does not 
+            personally identify you, to improve its products or to provide services or technologies to you. <em>Note: As stated 
+            in Section 5, Karacter prioritizes privacy and stores core user data locally.</em>
+          </p>
+
+          <h3>d. Termination:</h3> 
+          <p>
+            This Agreement is effective until terminated by you or Licensor. Your rights under this Agreement will 
+            terminate automatically if you fail to comply with any of its terms.
+          </p>
+
+          <h3>e. External Services:</h3> 
+          <p>
+            The Licensed Application may enable access to Licensor’s and/or third-party services and websites 
+            (collectively and individually, "External Services"). You agree to use the External Services at your sole risk. 
+            Licensor is not responsible for examining or evaluating the content or accuracy of any third-party External Services, 
+            and shall not be liable for any such third-party External Services. Data displayed by any Licensed Application or 
+            External Service is for general informational purposes only and is not guaranteed by Licensor or its agents.
+          </p>
+
+          <h3>f. Governing Law:</h3> 
+          <p>
+            Except to the extent expressly provided in the following paragraph, this Agreement and the relationship between you 
+            and Karacter shall be governed by the laws of the applicable jurisdiction where Karacter operates, excluding its 
+            conflicts of law provisions. If you are a citizen of any European Union country or Switzerland, Norway or Iceland, 
+            the governing law and forum shall be the laws and courts of your usual place of residence. Specifically excluded from 
+            application to this Agreement is that law known as the United Nations Convention on the International Sale of Goods.
+          </p>
+
           <p style="margin-top: 40px; color: var(--color-text-light); font-size: 0.9rem;">
-            Last updated: January 23, 2026
+            Last updated: February 27, 2026
           </p>
         </div>
       </section>
