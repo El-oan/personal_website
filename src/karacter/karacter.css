@@ -115,9 +115,14 @@
   z-index: 100;
   border: 1px solid var(--color-border);
   width: 144px;
+  transition: transform 0.45s ease, opacity 0.35s ease;
 }
 
-
+.qr-float-card-hidden {
+  transform: translateY(180px);
+  opacity: 0;
+  pointer-events: none;
+}
 
 .qr-link-overlay {
   position: absolute;
@@ -324,6 +329,12 @@
   display: none;
 }
 
+.bento-section {
+  width: calc(100% + 120px);
+  margin-left: -60px;
+  margin-right: -60px;
+}
+
 .alternate-bg {
   background-color: var(--color-bg-alt);
 }
@@ -365,27 +376,18 @@
 }
 
 .card-offline {
-  grid-row: span 5;
+  grid-row: span 6;
 }
 
 .card-ai {
-  min-height: 280px;
+  min-height: 0;
+  grid-row: span 6;
 }
 
 .card-compact {
   grid-column: span 1;
-  grid-row: span 5;
+  grid-row: span 6;
   padding: 24px;
-}
-
-.card-portrait {
-  grid-column: span 1;
-  grid-row: span 11;
-}
-
-.card-banner {
-  grid-column: span 2;
-  grid-row: span 10;
 }
 
 .card-tall {
@@ -393,8 +395,31 @@
   grid-row: span 15;
 }
 
+@media (min-width: 769px) {
+  .card-offline {
+    grid-column: 1 / span 2;
+  }
+
+  .card-handwriting {
+    grid-column: 1;
+  }
+
+  .card-hsk {
+    grid-column: 2;
+  }
+
+  .card-ai {
+    grid-column: 1 / span 2;
+  }
+
+  .lockscreen-bento {
+    grid-column: 3;
+    grid-row: 1 / span 18;
+  }
+}
+
 .card-text-only .bento-card-content {
-  max-width: 85%;
+  max-width: 100%;
 }
 
 .bento-card h3 {
@@ -416,6 +441,14 @@
 .card-ai p,
 .card-compact:has(.hsk-image) p {
   max-width: 65%;
+}
+
+.card-handwriting p {
+  max-width: 100%;
+}
+
+.card-offline p {
+  max-width: 100%;
 }
 
 .card-stacked p {
@@ -467,41 +500,6 @@
   object-fit: contain;
   box-shadow: var(--shadow-md);
   transform: translateY(0);
-}
-
-.image-only-card {
-  padding: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-}
-
-.entrycard-bento {
-  aspect-ratio: 1037 / 1545;
-  align-self: start;
-}
-
-.entrycard-image {
-  width: auto;
-  max-width: 100%;
-  height: 100%;
-  object-fit: contain;
-  filter: none;
-}
-
-.widget-bento {
-  aspect-ratio: 1025 / 485;
-  align-self: start;
-  border-radius: 48px;
-}
-
-.widget-image {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  transform: none;
-  filter: none;
 }
 
 .lockscreen-bento {
@@ -568,6 +566,65 @@
   max-width: 200px;
 }
 
+.download-section {
+  padding-top: 80px;
+}
+
+.download-section-card {
+  background: #ffffff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+}
+
+.download-copy {
+  max-width: 440px;
+}
+
+.download-copy h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 14px;
+}
+
+.download-copy p {
+  color: var(--color-text-light);
+  font-size: 1rem;
+  margin-bottom: 22px;
+}
+
+.download-copy .btn-primary,
+.download-copy .btn-primary:hover,
+.download-copy .btn-primary:active,
+.download-copy .btn-primary:visited {
+  color: #ffffff !important;
+}
+
+.download-qr-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+  gap: 12px;
+}
+
+.download-qr-image {
+  width: 220px;
+  height: auto;
+  border-radius: 0;
+  background: #fff;
+  box-shadow: none;
+}
+
+.download-store-badge {
+  width: 170px;
+  height: auto;
+}
+
 /* Footer */
 .footer {
   padding: 40px 0;
@@ -614,16 +671,19 @@
     grid-auto-rows: auto;
   }
 
+  .bento-section {
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
   .card-wide,
   .card-compact,
-  .card-portrait,
-  .card-banner,
   .card-tall {
     grid-column: span 1;
     grid-row: span 1;
   }
 
-  .entrycard-bento,
   .lockscreen-bento {
     min-height: auto;
   }
@@ -648,6 +708,20 @@
     max-width: 180px;
   }
 
+  .download-section-card {
+    flex-direction: column-reverse;
+    text-align: center;
+    padding: 28px;
+  }
+
+  .download-copy {
+    max-width: 100%;
+  }
+
+  .download-qr-image {
+    width: min(260px, 72vw);
+  }
+
   .footer-content {
     flex-direction: column;
     gap: 24px;
@@ -655,7 +729,8 @@
   }
 
   .stats-grid {
-    grid-template-columns: 1fr;
+    flex-direction: column;
+    gap: 20px;
     max-width: 400px;
     margin: 0 auto;
   }

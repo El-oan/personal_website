@@ -56,28 +56,23 @@
           <div class="bento-card card-wide card-offline card-text-only fade-in-up">
             <div class="bento-card-content">
               <h3>100% Offline Dictionary</h3>
-              <p>Requires no internet or VPN, making it the perfect tool for traveling through China or studying without distractions.</p>
+              <p>Look up definitions, pinyin, and usage notes instantly with zero connection. Every core lookup feature works on planes, trains, and inside regions where internet access is limited.</p>
             </div>
           </div>
 
-          <!-- Portrait Card: Entry Card -->
-          <div class="bento-card card-portrait entrycard-bento image-only-card fade-in-up" style="animation-delay: 0.05s;">
-            <img src="/karacter/entrycard.png" alt="Karacter Entry Card" class="bento-image entrycard-image" />
-          </div>
-
           <!-- Compact Card: Handwriting -->
-          <div class="bento-card card-compact fade-in-up" style="animation-delay: 0.1s;">
+          <div class="bento-card card-compact card-handwriting fade-in-up" style="animation-delay: 0.1s;">
             <div class="bento-card-content">
               <h3>Handwriting & Search</h3>
-              <p>Instantly find words by drawing them.</p>
+              <p>Draw unknown characters stroke by stroke, or search by pinyin, English, and Chinese. Built for moments when you can see a word but cannot type it yet.</p>
             </div>
           </div>
 
           <!-- Compact Card: HSK 3.0 -->
-          <div class="bento-card card-compact fade-in-up" style="animation-delay: 0.15s;">
+          <div class="bento-card card-compact card-hsk fade-in-up" style="animation-delay: 0.15s;">
             <div class="bento-card-content">
               <h3>HSK 3.0</h3>
-              <p>Track your progress with latest standards.</p>
+              <p>See word levels mapped to the latest HSK standard.</p>
               <div class="bento-card-visual">
                 <img src="/karacter/ancientseal.png" alt="Karacter Ancient Seal" class="bento-image hsk-image" />
               </div>
@@ -88,23 +83,18 @@
           <div class="bento-card card-wide card-ai fade-in-up" style="animation-delay: 0.2s;">
             <div class="bento-card-content">
               <h3>AI Sentence Breakdown</h3>
-              <p>Deconstructs complex phrases and explains grammar structures, acting as a bridge between a dictionary and a private tutor.</p>
+              <p>Get line-by-line explanations for difficult sentences, including grammar roles, tone, and word choice nuances, so you understand why a phrase works, not just what it translates to.</p>
               <div class="bento-card-visual">
                 <img src="/karacter/entrylist.png" alt="Karacter Entry List" class="bento-image ai-image" />
               </div>
             </div>
           </div>
 
-          <!-- Banner Card: Widget Image -->
-          <div class="bento-card card-banner widget-bento image-only-card fade-in-up" style="animation-delay: 0.3s;">
-             <img src="/karacter/widget.jpg" alt="Karacter Widget" class="bento-image widget-image" />
-          </div>
-
           <!-- Tall Card: Lock Screen Words -->
           <div class="bento-card card-tall lockscreen-bento card-stacked fade-in-up" style="animation-delay: 0.35s;">
             <div class="bento-card-content">
               <h3>Lock Screen Words</h3>
-              <p>Add words to your lockscreen to review them every time you open your phone.</p>
+              <p>Pin your own vocabulary to the iOS lock screen widgets and turn daily unlocks into spaced repetition, with lightweight review built into your normal phone routine.</p>
             </div>
             <div class="bento-card-image-bottom">
               <img src="/karacter/lockscreen.jpg" alt="Karacter Lockscreen Words" class="bento-image lockscreen-image" />
@@ -161,6 +151,29 @@
         </div>
       </section>
 
+      <section ref="downloadSection" class="content-section download-section">
+        <div class="download-section-card fade-in-up">
+          <div class="download-copy">
+            <h2>Download Karacter</h2>
+            <p>
+              Scan the QR code to install Karacter and keep Chinese definitions in your pocket,
+              even when you are offline.
+            </p>
+            <a
+              href="https://apps.apple.com/us/app/%E6%96%87-character/id6747664971?l=zh-Hans-CN"
+              target="_blank"
+              class="btn btn-primary"
+            >
+              Open App Store
+            </a>
+          </div>
+          <div class="download-qr-panel">
+            <img src="/karacter/QRCode.png" alt="Karacter App Store QR code" class="download-qr-image" />
+            <img src="/karacter/appstore.png" alt="Available on App Store" class="download-store-badge" />
+          </div>
+        </div>
+      </section>
+
     </main>
 
     <footer class="footer">
@@ -173,7 +186,7 @@
         </div>
       </div>
     </footer>
-    <div class="qr-float-card">
+    <div class="qr-float-card" :class="{ 'qr-float-card-hidden': isDownloadSectionVisible }">
       <img src="/karacter/QRCode.png" alt="Download on App Store" class="qr-code-img" />
       <div class="qr-content">
         <div class="qr-footer-row">
@@ -186,10 +199,16 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue';
+import { onMounted, onUnmounted, ref } from 'vue';
+
+const isDownloadSectionVisible = ref(false);
+const downloadSection = ref(null);
+
+let revealObserver;
+let downloadObserver;
 
 onMounted(() => {
-  const observer = new IntersectionObserver((entries) => {
+  revealObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
         entry.target.classList.add('visible');
@@ -197,18 +216,31 @@ onMounted(() => {
         // Trigger counters if it's a counter element
         if (entry.target.classList.contains('counter')) {
           animateCounter(entry.target);
-          observer.unobserve(entry.target); // Only animate once
+          revealObserver.unobserve(entry.target); // Only animate once
         }
       }
     });
   }, { threshold: 0.1 });
 
+  if (downloadSection.value) {
+    downloadObserver = new IntersectionObserver((entries) => {
+      isDownloadSectionVisible.value = entries.some(entry => entry.isIntersecting);
+    }, { threshold: 0.35 });
+
+    downloadObserver.observe(downloadSection.value);
+  }
+
   // Use a timeout to ensure DOM is ready and animations don't conflict with load
   setTimeout(() => {
-      document.querySelectorAll('.fade-in, .fade-in-up').forEach(el => observer.observe(el));
+      document.querySelectorAll('.fade-in, .fade-in-up').forEach(el => revealObserver.observe(el));
       // Observe counters specifically
-      document.querySelectorAll('.counter').forEach(el => observer.observe(el));
+      document.querySelectorAll('.counter').forEach(el => revealObserver.observe(el));
   }, 100);
+});
+
+onUnmounted(() => {
+  revealObserver?.disconnect();
+  downloadObserver?.disconnect();
 });
 
 function animateCounter(el) {
