@@ -90,7 +90,8 @@
     height: 120px;
     border-radius: 28px;
     background: white;
-    margin-left: 350px;
+    display: block;
+    margin: 0 auto 24px;
 }
 
 .hero-title {
