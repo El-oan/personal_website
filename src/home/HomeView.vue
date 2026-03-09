@@ -44,7 +44,7 @@
 
       <div id="about" class="section">
         <p>
-          Hi! I'm a 22-year-old engineering student at
+          Hi! I'm a 23-year-old engineering student at
           <strong>CentraleSupélec Paris-Saclay</strong>, graduating in 2027. 
           I am currently based in Paris.
         </p>
@@ -56,7 +56,7 @@
         </p>
         <p>
           I spent most of my life in the west of France, and 6 months in China. 
-          I'd love to try the USA, and travel around the world (yep overdone ik).
+          I'd love to travel around the world (yep overdone ik).
           Don't hesitate to reach out!
         </p>
       </div>
@@ -72,7 +72,7 @@
             alt="Karacter logo"
             class="card-logo"
           />
-          <div class="card-title">Karacter — Chinese Learning App</div>
+          <div class="card-title">Karacter — define Chinese</div>
           <div class="card-meta">iOS • Live on the App Store</div>
           <div class="card-desc">
             An offline Chinese learning helper with character drawing recognition, HSK 3.0 labeling, AI-powered sentence
@@ -88,6 +88,29 @@
               <span class="tag">Coffee</span>
             </div>
             <a class="card-button" href="/karacter/">文 website</a>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Focus Train: study timer</div>
+          <div class="card-meta">iOS • Live on the App Store</div>
+          <div class="card-desc">
+            A minimalist focus app built to help you stay consistent with deep work sessions. Set your study timer, train focus habits, and keep progress simple and distraction-free.
+          </div>
+          <div class="tags-row">
+            <div class="tags">
+              <span class="tag">React Native</span>
+              <span class="tag">iOS</span>
+              <span class="tag">Android</span>
+            </div>
+            <a
+              class="card-button"
+              href="https://apps.apple.com/fr/app/focus-train-study-timer/id6759213973?l=en-GB"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              download
+            </a>
           </div>
         </div>
 
@@ -383,4 +406,3 @@ onBeforeUnmount(() => {
   if (cleanup) cleanup();
 });
 </script>
-
