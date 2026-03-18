@@ -28,6 +28,7 @@ const router = createRouter({
       path: '/karacter/terms',
       name: 'karacter-terms',
       component: () => import('../karacter/TermsView.vue'),
+      alias: ['/karacter/terms/'],
       meta: {
         title: 'Karacter Terms',
         favicon: '/karacter/KaracterLogo.png'
@@ -37,6 +38,7 @@ const router = createRouter({
       path: '/notebook',
       name: 'notebook',
       component: () => import('../notebook/NotebookView.vue'),
+      alias: ['/notebook/'],
       meta: {
         title: 'Notebook',
         favicon: '/homepage/favicon.jpeg'
@@ -46,6 +48,7 @@ const router = createRouter({
       path: '/focustrain',
       name: 'focustrain',
       component: () => import('../focustrain/TermsView.vue'),
+      alias: ['/focustrain/'],
       meta: {
         title: 'Focus Train',
         favicon: '/focustrain/focustrainicon.png'
@@ -77,4 +80,3 @@ router.afterEach((to) => {
 });
 
 export default router;
-
