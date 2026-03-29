@@ -54,6 +54,11 @@
     user-select: none;
 }
 
+.input-prompt-spacer {
+    visibility: hidden;
+    pointer-events: none;
+}
+
 .code-cell-container {
     flex: 1;
     background-color: #171717;
@@ -211,4 +216,19 @@
 
 .back-link:hover {
     text-decoration: underline;
+}
+
+.image-cell {
+    flex: 1;
+    padding: 8px 0;
+}
+
+.image-cell img {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    border: 1px solid #454545;
+    border-radius: 4px;
+    background: #111;
 }

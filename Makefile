@@ -2,5 +2,3 @@
 
 launch:
 	npm run dev -- --host localhost
-
-laucnh: launch
