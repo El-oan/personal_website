@@ -28,6 +28,7 @@
   background-color: var(--color-bg);
   color: var(--color-text);
   line-height: 1.6;
+  overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -320,7 +321,7 @@
   top: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 500px;
+  width: min(500px, calc(100% - 48px));
   height: 1px;
   background-color: var(--color-border);
 }
@@ -638,7 +639,7 @@
   top: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 800px;
+  width: min(800px, calc(100% - 48px));
   height: 1px;
   background-color: var(--color-border);
 }

@@ -43,21 +43,9 @@
       <p class="subtitle">Engineering Student</p>
 
       <div id="about" class="section">
-        <p>
-          Hi! I'm a 23-year-old engineering student at
-          <strong>CentraleSupélec Paris-Saclay</strong>, graduating in 2027. 
-          I am currently based in Paris.
-        </p>
-        <p>
-          I love design, languages and coffee shops. 
-          I speak English and French, and I'm learning Chinese (Russian too, but
-  if I start a Russian sentence I end up speaking Chinese). 
-          I recently discovered I really enjoy machine learning too.
-        </p>
-        <p>
-          I spent most of my life in the west of France, and 6 months in China. 
-          I'd love to travel around the world (yep overdone ik).
-          Don't hesitate to reach out!
+        <p class="intro-typewriter" aria-live="polite">
+          {{ typedIntro }}
+          <span v-if="showTypewriterCursor" class="typewriter-cursor" aria-hidden="true">|</span>
         </p>
       </div>
 
@@ -119,9 +107,9 @@
           <div class="card-meta">Machine Learning • Work in progress</div>
           <div class="card-desc">
             An implementation of the Transformer architecture, following the 
-            <em>Attention Is All You Need</em> paper, with some improvements. 
-            Uses multi-head attention, positional encoding, Deepseek's 
-            mHC connections, RMS normalization. Trained on Kaggle's GPUs.
+            <em>Attention Is All You Need</em> paper, with some newer architectures. 
+            Uses multi-head attention, Deepseek's 
+            mHC connections, RMS normalization, Engram with with multi-head hashing. Trained on Kaggle's GPUs.
             Work in progress.
           </div>
           <div class="tags-row">
@@ -161,7 +149,7 @@
         <div class="card">
           <div class="card-title">Data Internship</div>
           <div class="card-meta">Forvis Mazars • Paris • sep 2025 - feb 2026</div>
-          <div class="card-desc">Worked as a Data Analyst/Engineer + Full-Stack dev.</div>
+          <div class="card-desc">Semester internship where I worked as a Data Engineer + Full-Stack dev.</div>
         </div>
 
         <div class="card">
@@ -246,6 +234,53 @@ let cleanup;
 
 const bgCanvas = ref(null);
 const isNavOpen = ref(false);
+const typedIntro = ref('');
+const showTypewriterCursor = ref(true);
+
+const introText = [
+  "Hi! I'm a 23-year-old engineering student at CentraleSupélec Paris-Saclay, graduating in 2027. I studied a semester in 上海 and I am currently based in Paris.",
+  "I love design, languages and coffee shops. I speak English and French, and I'm learning Chinese (Russian too, but if I start a Russian sentence I end up speaking Chinese). I recently discovered I really enjoy machine learning too.",
+  "I spent most of my life in the west of France, and 6 months in China. I'd love to travel around the world (yep overdone ik). Don't hesitate to reach out!"
+].join('\n\n');
+
+let typewriterInterval = null;
+let hideCursorTimeout = null;
+
+function scheduleCursorHide() {
+  if (hideCursorTimeout) {
+    window.clearTimeout(hideCursorTimeout);
+  }
+
+  hideCursorTimeout = window.setTimeout(() => {
+    showTypewriterCursor.value = false;
+    hideCursorTimeout = null;
+  }, 2000);
+}
+
+function startTypewriter() {
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  showTypewriterCursor.value = true;
+
+  if (prefersReducedMotion) {
+    typedIntro.value = introText;
+    scheduleCursorHide();
+    return;
+  }
+
+  let index = 0;
+  typedIntro.value = '';
+
+  typewriterInterval = window.setInterval(() => {
+    index += 1;
+    typedIntro.value = introText.slice(0, index);
+
+    if (index >= introText.length) {
+      window.clearInterval(typewriterInterval);
+      typewriterInterval = null;
+      scheduleCursorHide();
+    }
+  }, 16);
+}
 
 function openNav() {
   isNavOpen.value = true;
@@ -264,6 +299,7 @@ function handleNavFocusOut(event) {
 
 onMounted(() => {
   document.body.style.backgroundColor = '#121212';
+  startTypewriter();
 
   const canvas = bgCanvas.value;
   if (!canvas) return;
@@ -398,6 +434,16 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   document.body.style.backgroundColor = '';
+
+  if (typewriterInterval) {
+    window.clearInterval(typewriterInterval);
+    typewriterInterval = null;
+  }
+
+  if (hideCursorTimeout) {
+    window.clearTimeout(hideCursorTimeout);
+    hideCursorTimeout = null;
+  }
   
   if (bgCanvas.value && bgCanvas.value._cleanup) {
     bgCanvas.value._cleanup();
