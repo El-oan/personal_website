@@ -1,7 +1,7 @@
 .home-wrapper {
-  --bg-primary: #121212;
-  --bg-secondary: #121212;
-  --bg-card: #121212;
+  --bg-primary: #000000;
+  --bg-secondary: #000000;
+  --bg-card: #000000;
   --text-primary: #ededed;
   --text-secondary: #c8c8c8;
   --text-muted: #52525b;
@@ -12,6 +12,9 @@
   --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
   --gradient-text: linear-gradient(135deg, #5468ff 0%, #6b7dff 50%, #8291ff 100%);
   --border-color: rgba(255, 255, 255, 0.15);
+  --card-border-color: rgba(255, 255, 255, 0.10);
+  --card-inner-bg: rgba(54, 54, 54, 0.25);
+  --card-inner-border: rgba(255, 255, 255, 0.12);
   --container: 1200px;
   --radius: 16px;
   --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -185,12 +188,12 @@ html {
   height: 100%;
   /* Smoother fade: wide transparent edges, solid dark center */
   background: linear-gradient(90deg,
-      rgba(18, 18, 18, 0) 0%,
-      rgba(18, 18, 18, 0.4) 5%,
-      rgba(18, 18, 18, 0.95) 20%,
-      rgba(18, 18, 18, 0.95) 80%,
-      rgba(18, 18, 18, 0.4) 95%,
-      rgba(18, 18, 18, 0) 100%);
+      rgba(0, 0, 0, 0) 0%,
+      rgba(0, 0, 0, 0.4) 5%,
+      rgba(0, 0, 0, 0.95) 20%,
+      rgba(0, 0, 0, 0.95) 80%,
+      rgba(0, 0, 0, 0.4) 95%,
+      rgba(0, 0, 0, 0) 100%);
   pointer-events: none;
   z-index: 0;
 }
@@ -244,8 +247,15 @@ html {
   margin-bottom: 12px;
 }
 
+.intro-typewriter-shell {
+  overflow: hidden;
+  margin-bottom: 12px;
+  transition: height 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
 .intro-typewriter {
   white-space: pre-line;
+  margin-bottom: 0;
 }
 
 .typewriter-cursor {
@@ -253,7 +263,7 @@ html {
   width: 1ch;
   margin-left: 2px;
   color: var(--text-primary);
-  animation: typewriter-blink 0.9s steps(1, end) infinite;
+  animation: typewriter-blink 1s steps(1, end) infinite;
 }
 
 @keyframes typewriter-blink {
@@ -284,9 +294,26 @@ html {
   border-radius: 0;
   margin-bottom: 0;
   background: var(--bg-card);
-  border: var(--card-border-width) solid var(--border-color);
+  border: var(--card-border-width) solid var(--card-border-color);
   transition: var(--transition);
   position: relative;
+  isolation: isolate;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  inset: 3.5px;
+  border-radius: 10px;
+  background: var(--card-inner-bg);
+  border: 1px solid var(--card-inner-border);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.card > * {
+  position: relative;
+  z-index: 1;
 }
 
 .card:not(:last-child) {
@@ -300,13 +327,13 @@ html {
   left: calc(-1 * var(--card-border-width));
   width: calc(100% + 2 * var(--card-border-width));
   height: 24px;
-  border-left: var(--card-border-width) solid var(--border-color);
-  border-right: var(--card-border-width) solid var(--border-color);
+  border-left: var(--card-border-width) solid var(--card-border-color);
+  border-right: var(--card-border-width) solid var(--card-border-color);
   background: repeating-linear-gradient(90deg,
       transparent,
       transparent 10px,
-      var(--border-color) 10px,
-      var(--border-color) 11px);
+      var(--card-border-color) 10px,
+      var(--card-border-color) 11px);
   opacity: 0.7;
   box-sizing: border-box;
   background-clip: content-box;
@@ -320,8 +347,8 @@ html {
   border: 1px solid var(--border-color);
 }
 
-.card:hover {
-  border-color: rgba(84, 104, 255, 0.7);
+.card:hover::before {
+  border-color: rgba(84, 104, 255, 0.75);
 }
 
 .card-title {

@@ -43,10 +43,15 @@
       <p class="subtitle">Engineering Student</p>
 
       <div id="about" class="section">
-        <p class="intro-typewriter" aria-live="polite">
-          {{ typedIntro }}
-          <span v-if="showTypewriterCursor" class="typewriter-cursor" aria-hidden="true">|</span>
-        </p>
+        <div
+          class="intro-typewriter-shell"
+          :style="{ height: typewriterHeight === null ? 'auto' : `${typewriterHeight}px` }"
+        >
+          <p ref="introTypewriterEl" class="intro-typewriter" aria-live="polite">
+            {{ typedIntro }}
+            <span v-if="showTypewriterCursor" class="typewriter-cursor" aria-hidden="true">|</span>
+          </p>
+        </div>
       </div>
 
       <div class="divider"></div>
@@ -144,7 +149,9 @@
       <div class="divider"></div>
 
       <div id="experiences" class="section">
-        <h2>Experiences</h2>
+        <h2 data-section-title="experiences">
+          {{ typedSectionTitles.experiences }}
+        </h2>
 
         <div class="card">
           <div class="card-title">Data Internship</div>
@@ -168,7 +175,9 @@
       <div class="divider"></div>
 
       <div id="education" class="section">
-        <h2>Education</h2>
+        <h2 data-section-title="education">
+          {{ typedSectionTitles.education }}
+        </h2>
 
         <div class="card">
           <div class="card-title">CentraleSupélec</div>
@@ -197,7 +206,9 @@
       <div class="divider"></div>
 
       <div id="connect" class="section">
-        <h2>Connect</h2>
+        <h2 data-section-title="connect">
+          {{ typedSectionTitles.connect }}
+        </h2>
         <p>Feel free to reach out :)</p>
         <div class="links">
           <a href="https://www.linkedin.com/in/eloantourtelier/" target="_blank" class="link-button" @click="trackConnect('LinkedIn')"> LinkedIn </a>
@@ -223,7 +234,7 @@
 </template>
 
 <script setup>
-import { ref, onBeforeUnmount, onMounted } from 'vue';
+import { ref, reactive, onBeforeUnmount, onMounted, watch } from 'vue';
 import posthog from 'posthog-js';
 
 const trackConnect = (platform) => {
@@ -236,15 +247,48 @@ const bgCanvas = ref(null);
 const isNavOpen = ref(false);
 const typedIntro = ref('');
 const showTypewriterCursor = ref(true);
+const introTypewriterEl = ref(null);
+const typewriterHeight = ref(null);
+const typedSectionTitles = reactive({
+  experiences: '',
+  education: '',
+  connect: ''
+});
 
 const introText = [
-  "Hi! I'm a 23-year-old engineering student at CentraleSupélec Paris-Saclay, graduating in 2027. I studied a semester in 上海 and I am currently based in Paris.",
+  "Hi! I'm a 23-year-old engineering student at CentraleSupélec Paris-Saclay, graduating in 2027. I studied a semester in 上海 (Shanghai) and I am currently based in Paris.",
   "I love design, languages and coffee shops. I speak English and French, and I'm learning Chinese (Russian too, but if I start a Russian sentence I end up speaking Chinese). I recently discovered I really enjoy machine learning too.",
   "I spent most of my life in the west of France, and 6 months in China. I'd love to travel around the world (yep overdone ik). Don't hesitate to reach out!"
 ].join('\n\n');
+const sectionTitleText = {
+  experiences: 'Experiences',
+  education: 'Education',
+  connect: 'Connect'
+};
+const INTRO_TYPE_INTERVAL_MS = 16;
+const SECTION_TITLE_TYPE_INTERVAL_MS = 48;
 
 let typewriterInterval = null;
 let hideCursorTimeout = null;
+let typewriterHeightRaf = 0;
+let sectionTitleObserver = null;
+const sectionTitleIntervals = new Map();
+const animatedSectionTitles = new Set();
+
+function syncTypewriterHeight() {
+  if (typewriterHeightRaf) return;
+
+  typewriterHeightRaf = window.requestAnimationFrame(() => {
+    typewriterHeightRaf = 0;
+    const el = introTypewriterEl.value;
+    if (!el) return;
+    typewriterHeight.value = el.scrollHeight;
+  });
+}
+
+watch([typedIntro, showTypewriterCursor], () => {
+  syncTypewriterHeight();
+}, { flush: 'post' });
 
 function scheduleCursorHide() {
   if (hideCursorTimeout) {
@@ -279,7 +323,59 @@ function startTypewriter() {
       typewriterInterval = null;
       scheduleCursorHide();
     }
-  }, 16);
+  }, INTRO_TYPE_INTERVAL_MS);
+}
+
+function animateSectionTitle(key) {
+  if (animatedSectionTitles.has(key)) return;
+
+  animatedSectionTitles.add(key);
+  typedSectionTitles[key] = '';
+
+  let index = 0;
+  const fullText = sectionTitleText[key];
+  const intervalId = window.setInterval(() => {
+    index += 1;
+    typedSectionTitles[key] = fullText.slice(0, index);
+
+    if (index >= fullText.length) {
+      window.clearInterval(intervalId);
+      sectionTitleIntervals.delete(key);
+    }
+  }, SECTION_TITLE_TYPE_INTERVAL_MS);
+
+  sectionTitleIntervals.set(key, intervalId);
+}
+
+function setupSectionTitleTypewriters() {
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const keys = Object.keys(sectionTitleText);
+
+  if (prefersReducedMotion) {
+    keys.forEach((key) => {
+      typedSectionTitles[key] = sectionTitleText[key];
+    });
+    return;
+  }
+
+  sectionTitleObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+
+      const key = entry.target.getAttribute('data-section-title');
+      if (!key || !(key in sectionTitleText)) return;
+
+      animateSectionTitle(key);
+      sectionTitleObserver.unobserve(entry.target);
+    });
+  }, {
+    threshold: 0.4,
+    rootMargin: '0px 0px -10% 0px'
+  });
+
+  document.querySelectorAll('[data-section-title]').forEach((el) => {
+    sectionTitleObserver.observe(el);
+  });
 }
 
 function openNav() {
@@ -298,8 +394,11 @@ function handleNavFocusOut(event) {
 }
 
 onMounted(() => {
-  document.body.style.backgroundColor = '#121212';
+  document.body.style.backgroundColor = '#000000';
   startTypewriter();
+  setupSectionTitleTypewriters();
+  window.addEventListener('resize', syncTypewriterHeight);
+  syncTypewriterHeight();
 
   const canvas = bgCanvas.value;
   if (!canvas) return;
@@ -443,6 +542,19 @@ onBeforeUnmount(() => {
   if (hideCursorTimeout) {
     window.clearTimeout(hideCursorTimeout);
     hideCursorTimeout = null;
+  }
+
+  if (sectionTitleObserver) {
+    sectionTitleObserver.disconnect();
+    sectionTitleObserver = null;
+  }
+  sectionTitleIntervals.forEach((intervalId) => window.clearInterval(intervalId));
+  sectionTitleIntervals.clear();
+
+  window.removeEventListener('resize', syncTypewriterHeight);
+  if (typewriterHeightRaf) {
+    window.cancelAnimationFrame(typewriterHeightRaf);
+    typewriterHeightRaf = 0;
   }
   
   if (bgCanvas.value && bgCanvas.value._cleanup) {
