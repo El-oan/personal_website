@@ -11,6 +11,8 @@ export default defineConfig({
       input: {
         main: resolve(__dirname, 'index.html'),
         404: resolve(__dirname, '404.html'),
+        karacter: resolve(__dirname, 'karacter/index.html'),
+        karacterTerms: resolve(__dirname, 'karacter/terms/index.html'),
       },
     },
   },
