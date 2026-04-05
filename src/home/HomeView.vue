@@ -256,6 +256,7 @@ const sectionTitleText = {
   connect: 'Connect'
 };
 const SECTION_TITLE_TYPE_INTERVAL_MS = 48;
+const GRID_LAYER_COUNT = 10;
 
 let sectionTitleObserver = null;
 const sectionTitleIntervals = new Map();
@@ -356,8 +357,37 @@ onMounted(() => {
   window.addEventListener('resize', resize);
   resize();
 
-  const particles = [];
   const spacing = 30; // Distance between dots
+  const pixelSize = 5;
+  const gridLayers = Array.from({ length: GRID_LAYER_COUNT }, (_, layerIndex) => {
+    const usesPrimaryPalette = layerIndex % 2 === 0;
+    const baseRed = usesPrimaryPalette ? 84 : 65;
+    const baseGreen = usesPrimaryPalette ? 104 : 80;
+    const baseBlue = usesPrimaryPalette ? 255 : 210;
+
+    return {
+      offset: layerIndex * pixelSize,
+      threshold: 0.58 + (layerIndex % 4) * 0.02,
+      phase: layerIndex * 0.35,
+      speedA: 0.45 + layerIndex * 0.08,
+      speedB: 0.8 + layerIndex * 0.06,
+      speedC: 0.3 + layerIndex * 0.04,
+      speedD: 0.5 + layerIndex * 0.05,
+      freqX: 0.1 + layerIndex * 0.007,
+      freqY: 0.15 + layerIndex * 0.006,
+      freqXY: 0.05 + layerIndex * 0.003,
+      freqXMinusY: 0.03 + layerIndex * 0.002,
+      antiSpeedA: 0.65 + layerIndex * 0.07,
+      antiSpeedB: 0.45 + layerIndex * 0.06,
+      antiSpeedC: 0.85 + layerIndex * 0.05,
+      antiFreqX: 0.075 + layerIndex * 0.004,
+      antiFreqY: 0.06 + layerIndex * 0.003,
+      antiFreqDiag: 0.045 + layerIndex * 0.002,
+      antiPeakCenter: 0.93 - (layerIndex % 3) * 0.015,
+      antiPeakWidth: 0.055 + (layerIndex % 2) * 0.008,
+      fill: `rgba(${Math.max(38, baseRed - layerIndex * 2)}, ${Math.max(48, baseGreen - layerIndex * 2)}, ${Math.max(150, baseBlue - layerIndex * 5)}, ${Math.max(0.12, 0.42 - layerIndex * 0.025)})`
+    };
+  });
   
   const render = (time) => {
     ctx.clearRect(0, 0, width, height);
@@ -369,39 +399,28 @@ onMounted(() => {
 
     for (let y = 0; y < rows; y++) {
       for (let x = 0; x < cols; x++) {
-        // Primary Grid Point
-        const px = x * spacing + (y % 2 === 0 ? 0 : spacing / 2);
-        const py = y * spacing;
+        for (const layer of gridLayers) {
+          const px = x * spacing + (y % 2 === 0 ? 0 : spacing / 2) + layer.offset;
+          const py = y * spacing + layer.offset;
 
-        const val = Math.sin(x * 0.1 + t) * 0.5 + 
-                    Math.sin(y * 0.15 + t * 0.8) * 0.5 + 
-                    Math.sin((x + y) * 0.05 + t * 0.3) * 0.3 +
-                    Math.sin((x - y * 1.5) * 0.03 + t * 0.5) * 0.2;
-                    
-        const norm = (val + 1.5) / 3; 
-        
-        // Binary threshold: sudden appearance
-        if (norm > 0.60) {
-          ctx.fillStyle = `rgba(84, 104, 255, 0.4)`; // Blue
-          ctx.fillRect(px, py, 2.9, 2.9);
-        }
+          const val =
+            Math.sin((x + layer.phase) * layer.freqX + t * layer.speedA) * 0.5 +
+            Math.sin((y - layer.phase) * layer.freqY + t * layer.speedB) * 0.5 +
+            Math.cos((x + y) * layer.freqXY + t * layer.speedC) * 0.3 +
+            Math.sin((x - y * (1.2 + layer.phase * 0.1)) * layer.freqXMinusY + t * layer.speedD) * 0.2;
 
-        // Secondary Grid Point (Independent)
-        const px2 = x * spacing + (y % 2 === 0 ? spacing / 2 : 0);
-        const py2 = y * spacing; 
+          const norm = (val + 1.5) / 3;
+          const antiVal =
+            Math.sin((x + layer.phase * 2) * layer.antiFreqX - (y - layer.phase) * layer.antiFreqY + t * layer.antiSpeedA) * 0.55 +
+            Math.cos((x - y * 0.85) * layer.antiFreqDiag - t * layer.antiSpeedB) * 0.45 +
+            Math.sin((x + y * 1.1) * layer.antiFreqDiag + t * layer.antiSpeedC) * 0.3;
+          const antiNorm = (antiVal + 1.3) / 2.6;
+          const isInAntiWave = Math.abs(antiNorm - layer.antiPeakCenter) < layer.antiPeakWidth;
 
-        // Different frequencies and directions for independence
-        const val2 = Math.cos(x * 0.12 - t * 0.8) * 0.5 + 
-                     Math.sin(y * 0.18 + t * 1.1) * 0.5 + 
-                     Math.cos((x - y) * 0.04 + t * 0.4) * 0.3 +
-                     Math.sin((x + y * 1.2) * 0.04 - t * 0.6) * 0.2;
-
-        const norm2 = (val2 + 1.5) / 3;
-
-        // Binary threshold for second grid
-        if (norm2 > 0.60) {
-          ctx.fillStyle = `rgba(65, 80, 210, 0.5)`; // Lighter Blue
-          ctx.fillRect(px2, py2, 2, 2);
+          if (norm > layer.threshold && !isInAntiWave) {
+            ctx.fillStyle = layer.fill;
+            ctx.fillRect(px, py, pixelSize, pixelSize);
+          }
         }
       }
     }
