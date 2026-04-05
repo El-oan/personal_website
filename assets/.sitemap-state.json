@@ -1,0 +1,22 @@
+{
+  "/": {
+    "signature": "21553fbd6d5271dc691ffae06a94874c27215b0a3d4f11222cbf5edfdc087111",
+    "lastmod": "2026-04-05"
+  },
+  "/karacter/": {
+    "signature": "9b133a38cecb1a6ffbc9fb545db1b6e05f9e7cc719650fa71e46caaed455fc1b",
+    "lastmod": "2026-04-05"
+  },
+  "/karacter/terms/": {
+    "signature": "71fdea00ed7efe8f80a77e0628e094510df7362185d1115c2d73af60cbac3a09",
+    "lastmod": "2026-04-05"
+  },
+  "/focustrain/": {
+    "signature": "624e5e903d6c32b1a233615bee8c57a3eb3ef4a9feaedd69d38403a4a10193df",
+    "lastmod": "2026-04-05"
+  },
+  "/notebook/": {
+    "signature": "40eefe9ef19499d8c4297bb53ae0cbbf3e17e010e87988d2bf24473870c92636",
+    "lastmod": "2026-04-05"
+  }
+}

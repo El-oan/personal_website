@@ -234,6 +234,8 @@ const trackConnect = (platform) => {
 };
 
 let cleanup;
+let colorSchemeMediaQuery = null;
+let handleColorSchemeChange = null;
 
 const bgCanvas = ref(null);
 const isNavOpen = ref(false);
@@ -327,7 +329,12 @@ function handleNavFocusOut(event) {
 }
 
 onMounted(() => {
-  document.body.style.backgroundColor = '#000000';
+  colorSchemeMediaQuery = window.matchMedia('(prefers-color-scheme: light)');
+  handleColorSchemeChange = (event) => {
+    document.body.style.backgroundColor = event.matches ? '#fcfcfd' : '#000000';
+  };
+  handleColorSchemeChange(colorSchemeMediaQuery);
+  colorSchemeMediaQuery.addEventListener('change', handleColorSchemeChange);
   setupSectionTitleTypewriters();
 
   const canvas = bgCanvas.value;
@@ -463,6 +470,11 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   document.body.style.backgroundColor = '';
+  if (colorSchemeMediaQuery && handleColorSchemeChange) {
+    colorSchemeMediaQuery.removeEventListener('change', handleColorSchemeChange);
+  }
+  colorSchemeMediaQuery = null;
+  handleColorSchemeChange = null;
 
   if (sectionTitleObserver) {
     sectionTitleObserver.disconnect();

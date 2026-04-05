@@ -1,4 +1,4 @@
-.PHONY: launch laucnh
+.PHONY: test
 
-launch:
+test:
 	npm run dev -- --host localhost
