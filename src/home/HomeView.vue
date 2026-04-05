@@ -43,15 +43,7 @@
       <p class="subtitle">Engineering Student</p>
 
       <div id="about" class="section">
-        <div
-          class="intro-typewriter-shell"
-          :style="{ height: typewriterHeight === null ? 'auto' : `${typewriterHeight}px` }"
-        >
-          <p ref="introTypewriterEl" class="intro-typewriter" aria-live="polite">
-            {{ typedIntro }}
-            <span v-if="showTypewriterCursor" class="typewriter-cursor" aria-hidden="true">|</span>
-          </p>
-        </div>
+        <p class="intro-typewriter">{{ introText }}</p>
       </div>
 
       <div class="divider"></div>
@@ -234,7 +226,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, onBeforeUnmount, onMounted, watch } from 'vue';
+import { ref, reactive, onBeforeUnmount, onMounted } from 'vue';
 import posthog from 'posthog-js';
 
 const trackConnect = (platform) => {
@@ -245,10 +237,6 @@ let cleanup;
 
 const bgCanvas = ref(null);
 const isNavOpen = ref(false);
-const typedIntro = ref('');
-const showTypewriterCursor = ref(true);
-const introTypewriterEl = ref(null);
-const typewriterHeight = ref(null);
 const typedSectionTitles = reactive({
   experiences: '',
   education: '',
@@ -258,73 +246,18 @@ const typedSectionTitles = reactive({
 const introText = [
   "Hi! I'm a 23-year-old engineering student at CentraleSupélec Paris-Saclay, graduating in 2027. I studied a semester in 上海 (Shanghai) and I am currently based in Paris.",
   "I love design, languages and coffee shops. I speak English and French, and I'm learning Chinese (Russian too, but if I start a Russian sentence I end up speaking Chinese). I recently discovered I really enjoy machine learning too.",
-  "I spent most of my life in the west of France, and 6 months in China. I'd love to travel around the world (yep overdone ik). Don't hesitate to reach out!"
+  "I spent most of my life in the west of France, and 6 months in China. I'd love to travel around the world. Don't hesitate to reach out!"
 ].join('\n\n');
 const sectionTitleText = {
   experiences: 'Experiences',
   education: 'Education',
   connect: 'Connect'
 };
-const INTRO_TYPE_INTERVAL_MS = 16;
 const SECTION_TITLE_TYPE_INTERVAL_MS = 48;
 
-let typewriterInterval = null;
-let hideCursorTimeout = null;
-let typewriterHeightRaf = 0;
 let sectionTitleObserver = null;
 const sectionTitleIntervals = new Map();
 const animatedSectionTitles = new Set();
-
-function syncTypewriterHeight() {
-  if (typewriterHeightRaf) return;
-
-  typewriterHeightRaf = window.requestAnimationFrame(() => {
-    typewriterHeightRaf = 0;
-    const el = introTypewriterEl.value;
-    if (!el) return;
-    typewriterHeight.value = el.scrollHeight;
-  });
-}
-
-watch([typedIntro, showTypewriterCursor], () => {
-  syncTypewriterHeight();
-}, { flush: 'post' });
-
-function scheduleCursorHide() {
-  if (hideCursorTimeout) {
-    window.clearTimeout(hideCursorTimeout);
-  }
-
-  hideCursorTimeout = window.setTimeout(() => {
-    showTypewriterCursor.value = false;
-    hideCursorTimeout = null;
-  }, 2000);
-}
-
-function startTypewriter() {
-  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  showTypewriterCursor.value = true;
-
-  if (prefersReducedMotion) {
-    typedIntro.value = introText;
-    scheduleCursorHide();
-    return;
-  }
-
-  let index = 0;
-  typedIntro.value = '';
-
-  typewriterInterval = window.setInterval(() => {
-    index += 1;
-    typedIntro.value = introText.slice(0, index);
-
-    if (index >= introText.length) {
-      window.clearInterval(typewriterInterval);
-      typewriterInterval = null;
-      scheduleCursorHide();
-    }
-  }, INTRO_TYPE_INTERVAL_MS);
-}
 
 function animateSectionTitle(key) {
   if (animatedSectionTitles.has(key)) return;
@@ -395,10 +328,7 @@ function handleNavFocusOut(event) {
 
 onMounted(() => {
   document.body.style.backgroundColor = '#000000';
-  startTypewriter();
   setupSectionTitleTypewriters();
-  window.addEventListener('resize', syncTypewriterHeight);
-  syncTypewriterHeight();
 
   const canvas = bgCanvas.value;
   if (!canvas) return;
@@ -534,28 +464,12 @@ onMounted(() => {
 onBeforeUnmount(() => {
   document.body.style.backgroundColor = '';
 
-  if (typewriterInterval) {
-    window.clearInterval(typewriterInterval);
-    typewriterInterval = null;
-  }
-
-  if (hideCursorTimeout) {
-    window.clearTimeout(hideCursorTimeout);
-    hideCursorTimeout = null;
-  }
-
   if (sectionTitleObserver) {
     sectionTitleObserver.disconnect();
     sectionTitleObserver = null;
   }
   sectionTitleIntervals.forEach((intervalId) => window.clearInterval(intervalId));
   sectionTitleIntervals.clear();
-
-  window.removeEventListener('resize', syncTypewriterHeight);
-  if (typewriterHeightRaf) {
-    window.cancelAnimationFrame(typewriterHeightRaf);
-    typewriterHeightRaf = 0;
-  }
   
   if (bgCanvas.value && bgCanvas.value._cleanup) {
     bgCanvas.value._cleanup();
