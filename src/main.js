@@ -23,3 +23,7 @@ app.use(router);
 
 app.mount('#app');
 
+const seoFallback = document.getElementById('seo-fallback');
+if (seoFallback) {
+    seoFallback.remove();
+}

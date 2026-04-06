@@ -32,6 +32,10 @@
   --radius: 16px;
   --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   --card-border-width: 1px;
+  --sidebar-open-width: 290px;
+  --sidebar-min-center-gap: 48px;
+  --sidebar-min-right-edge: 12px;
+  --sidebar-base-right: clamp(10px, 20vw, 350px);
 }
 
 html {
@@ -60,10 +64,16 @@ html {
 .sidebar {
   position: fixed;
   top: 0;
-  right: 0;
+  right: min(
+    var(--sidebar-base-right),
+    max(
+      var(--sidebar-min-right-edge),
+      calc(42vw - var(--sidebar-open-width) - var(--sidebar-min-center-gap))
+    )
+  );
   height: 100vh;
   width: 86px;
-  padding: 160px 32px 32px;
+  padding: 100px 32px 32px;
   z-index: 1000;
   transition: width 0.12s ease;
 }
@@ -478,6 +488,12 @@ html {
 }
 
 @media (max-width: 900px) {
+  .home-wrapper {
+    --sidebar-open-width: 240px;
+    --sidebar-min-center-gap: 32px;
+    --sidebar-base-right: clamp(10px, 14vw, 120px);
+  }
+
   .sidebar {
     padding: 68px 10px 24px;
     width: 72px;
@@ -509,7 +525,7 @@ html {
   }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 910px) {
   .sidebar {
     display: none;
   }

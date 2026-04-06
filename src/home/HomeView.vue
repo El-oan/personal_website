@@ -78,7 +78,7 @@
 
         <div class="card">
           <div class="card-title">Focus Train: study timer</div>
-          <div class="card-meta">iOS • Live on the App Store</div>
+          <div class="card-meta">cross platform • Live on the App Store</div>
           <div class="card-desc">
             A minimalist focus app built to help you stay consistent with deep work sessions. Set your study timer, train focus habits, and keep progress simple and distraction-free.
           </div>

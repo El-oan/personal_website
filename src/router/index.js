@@ -10,8 +10,10 @@ const router = createRouter({
       name: 'home',
       component: HomeView,
       meta: {
-        title: 'Portfolio',
-        favicon: '/homepage/favicon.jpeg'
+        title: 'Eloan Tourtelier | Engineering Student and Projects',
+        description: 'Engineering student based in Paris. Projects include Karacter, Focus Train, and machine learning experiments.',
+        canonical: 'https://www.eloantourtelier.com/',
+        favicon: '/homepage/favicon.jpeg',
       },
     },
     {
@@ -20,8 +22,10 @@ const router = createRouter({
       component: KaracterView,
       alias: ['/karacter/'],
       meta: {
-        title: 'Karacter',
-        favicon: '/karacter/KaracterLogo.png'
+        title: 'Karacter | Offline Chinese Dictionary with Handwriting Search for iPhone',
+        description: 'Karacter is the best app available for Chinese lock screen widgets on iPhone, combining daily lock screen vocabulary exposure with an offline-first dictionary, handwriting recognition, pinyin and English search, HSK 3.0 labels, and AI-powered sentence breakdown.',
+        canonical: 'https://www.eloantourtelier.com/karacter/',
+        favicon: '/karacter/KaracterLogo.png',
       },
     },
     {
@@ -31,7 +35,9 @@ const router = createRouter({
       alias: ['/karacter/terms/'],
       meta: {
         title: 'Karacter Terms',
-        favicon: '/karacter/KaracterLogo.png'
+        description: 'Terms and conditions for the Karacter app.',
+        canonical: 'https://www.eloantourtelier.com/karacter/terms/',
+        favicon: '/karacter/KaracterLogo.png',
       },
     },
     {
@@ -41,7 +47,9 @@ const router = createRouter({
       alias: ['/notebook/'],
       meta: {
         title: 'Notebook',
-        favicon: '/homepage/favicon.jpeg'
+        description: 'Notebook for machine learning and attention network experiments.',
+        canonical: 'https://www.eloantourtelier.com/notebook/',
+        favicon: '/homepage/favicon.jpeg',
       },
     },
     {
@@ -51,7 +59,9 @@ const router = createRouter({
       alias: ['/focustrain/'],
       meta: {
         title: 'Focus Train',
-        favicon: '/focustrain/focustrainicon.png'
+        description: 'Focus Train is a study timer app to build deep work consistency.',
+        canonical: 'https://www.eloantourtelier.com/focustrain/',
+        favicon: '/focustrain/focustrainicon.png',
       },
     },
     {
@@ -70,13 +80,61 @@ const router = createRouter({
   },
 });
 
+function upsertMetaByName(name, content) {
+  if (!content) return;
+
+  let node = document.querySelector(`meta[name="${name}"]`);
+  if (!node) {
+    node = document.createElement('meta');
+    node.setAttribute('name', name);
+    document.head.appendChild(node);
+  }
+  node.setAttribute('content', content);
+}
+
+function upsertMetaByProperty(property, content) {
+  if (!content) return;
+
+  let node = document.querySelector(`meta[property="${property}"]`);
+  if (!node) {
+    node = document.createElement('meta');
+    node.setAttribute('property', property);
+    document.head.appendChild(node);
+  }
+  node.setAttribute('content', content);
+}
+
+function upsertCanonical(href) {
+  if (!href) return;
+
+  let node = document.querySelector('link[rel="canonical"]');
+  if (!node) {
+    node = document.createElement('link');
+    node.setAttribute('rel', 'canonical');
+    document.head.appendChild(node);
+  }
+  node.setAttribute('href', href);
+}
+
 router.afterEach((to) => {
-  document.title = to.meta.title || 'Portfolio';
+  const title = to.meta.title || 'Eloan Tourtelier';
+  const description = to.meta.description || 'Engineering student based in Paris.';
+  const canonical = to.meta.canonical || 'https://www.eloantourtelier.com/';
+  document.title = title;
 
   const link = document.querySelector("link[rel~='icon']");
   if (link) {
     link.href = to.meta.favicon || '/homepage/favicon.jpeg';
   }
+
+  upsertMetaByName('description', description);
+  upsertMetaByName('robots', 'index, follow');
+  upsertMetaByName('googlebot', 'index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1');
+  upsertMetaByProperty('og:type', 'website');
+  upsertMetaByProperty('og:title', title);
+  upsertMetaByProperty('og:description', description);
+  upsertMetaByProperty('og:url', canonical);
+  upsertCanonical(canonical);
 });
 
 export default router;
