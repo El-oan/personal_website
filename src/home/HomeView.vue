@@ -140,7 +140,7 @@
             </div>
             <a
               class="card-button"
-              href="https://github.com/El-oan"
+              href="https://github.com/El-oan/radar_pointcloud"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -230,11 +230,11 @@
             class="card-logo"
             loading="lazy"
           />
-          <div class="card-title">Machine Learning Engineer</div>
+          <div class="card-title">Fintech data Internship</div>
           <div class="card-meta">Magen Financial • New York • Sep 2026 - Feb 2027</div>
           <div class="card-desc">
             Joining Magen Financial in New York for a six-month internship, applying my machine-learning and
-            data-processing experience in a financial-services environment.
+            data-processing experience in a fintech environment.
           </div>
         </div>
 
@@ -245,8 +245,8 @@
             class="card-logo"
             loading="lazy"
           />
-          <div class="card-title">Data Internship</div>
-          <div class="card-meta">Forvis Mazars • Paris • Sep 2025 - Feb 2026</div>
+          <div class="card-title">Data engineering Internship</div>
+          <div class="card-meta">Forvis Mazars • Paris • Sep 2025 - Jan 2026</div>
           <div class="card-desc">
             Worked as a Data Engineer and Full-Stack Developer on mutiple client and internal projects.
             Experimented with local LLM agents (Docker model) and RAG, an online heavy data
